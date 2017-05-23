@@ -54,7 +54,18 @@ Meteor.methods({
         if (error) {
           console.trace('elasticsearch cluster is down!');
         } else {
-          console.log('All is well');
+          // Get Elasticsearch data
+          // return data or throw error
+          esClient.search(queryParams)
+            .then(
+              (response) => {
+                console.log(response);
+                return response;
+              },
+              (error) => {
+                // Throw an error
+                throw new Meteor.Error(error.message);
+          });
         }
       });
   }
