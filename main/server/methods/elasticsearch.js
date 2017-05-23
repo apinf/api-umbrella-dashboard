@@ -2,7 +2,10 @@
 import ElasticSearch from 'elasticsearch';
 
 Meteor.methods({
-  getElasticsearchData: function (host) {
+  async getElasticsearchData (host) {
+    // Placeholder for Elasticsearch data
+    let elasticsearchData;
+
     // default query parameters
     const queryParams = {
       size: 0,
@@ -46,27 +49,34 @@ Meteor.methods({
     // Initialize Elasticsearch client, using provided host value
     const esClient = new ElasticSearch.Client({ host });
 
-    // Make sure we can connect to Elasticsearch
-    esClient.ping({
+    // Check if we can connect to Elasticsearch
+    const elasticsearchAccessible = await esClient.ping({
       // ping usually has a 3000ms timeout
       requestTimeout: 1000
       }, function (error) {
         if (error) {
-          console.trace('elasticsearch cluster is down!');
+          throw Meteor.Error('Elasticsearch cluster is down.');
+          return false;
         } else {
-          // Get Elasticsearch data
-          // return data or throw error
-          esClient.search(queryParams)
-            .then(
-              (response) => {
-                console.log(response);
-                return response;
-              },
-              (error) => {
-                // Throw an error
-                throw new Meteor.Error(error.message);
-          });
+          return true;
         }
       });
+
+    // Make sure Elasticsearch is available
+    if (elasticsearchAccessible) {
+      // Get Elasticsearch data
+      // return data or throw error
+      elasticsearchData = await esClient.search(queryParams)
+        .then(
+          (response) => {
+            return response;
+          },
+          (error) => {
+            // Throw an error
+            throw new Meteor.Error(error.message);
+      });
+
+      return elasticsearchData;
+    }
   }
 });
