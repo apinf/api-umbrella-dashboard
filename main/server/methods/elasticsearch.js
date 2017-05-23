@@ -53,14 +53,18 @@ Meteor.methods({
     const elasticsearchAccessible = await esClient.ping({
       // ping usually has a 3000ms timeout
       requestTimeout: 1000
-      }, function (error) {
-        if (error) {
-          throw new Meteor.Error('Elasticsearch cluster is down.');
-          return false;
-        } else {
-          return true;
-        }
-      });
+    })
+    .then(
+      (response) => {
+        // Elasticsearch is accessible
+        return true;
+      },
+      (error) => {
+        // Throw an error
+        throw new Meteor.Error(error.message);
+        return false;
+      }
+    )
 
     // Make sure Elasticsearch is available
     if (elasticsearchAccessible) {
