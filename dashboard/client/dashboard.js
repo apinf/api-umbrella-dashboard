@@ -13,7 +13,9 @@ Template.dashboard.onCreated(function () {
     // Get value of Elasticsearch host
     const host = templateInstance.elasticsearchHost.get();
 
-    console.log(host);
+    if (host) {
+      Meteor.call('getElasticsearchData', host);
+    }
   });
 });
 
