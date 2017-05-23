@@ -55,7 +55,7 @@ Meteor.methods({
       requestTimeout: 1000
       }, function (error) {
         if (error) {
-          throw Meteor.Error('Elasticsearch cluster is down.');
+          throw new Meteor.Error('Elasticsearch cluster is down.');
           return false;
         } else {
           return true;
