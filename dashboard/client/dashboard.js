@@ -1,3 +1,5 @@
+import { Template } from 'meteor/templating';
+
 Template.dashboard.events({
   'submit #elasticsearch-host' (event, templateInstance) {
     // prevent default form action
