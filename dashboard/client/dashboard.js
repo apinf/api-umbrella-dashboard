@@ -8,13 +8,23 @@ Template.dashboard.onCreated(function () {
   // Create reactive variable for Elasticsearch host
   templateInstance.elasticsearchHost = new ReactiveVar();
 
+  // Create reactive variable for Elasticsearch data
+  templateInstance.elasticsearchData = new ReactiveVar();
+
   // Handle changes to Elasticsearch host
   templateInstance.autorun(function () {
     // Get value of Elasticsearch host
     const host = templateInstance.elasticsearchHost.get();
 
     if (host) {
-      Meteor.call('getElasticsearchData', host);
+      Meteor.call('getElasticsearchData', host, function (error, result) {
+        if (error) {
+          throw Meteor.Error('error', error)
+        } else {
+          // Update Elasticsearch data reactive variable
+          templateInstance.elasticsearchData.set(result);
+        }
+      });
     }
   });
 });
