@@ -41,3 +41,13 @@ Template.dashboard.events({
     templateInstance.elasticsearchHost.set(host);
   }
 });
+
+Template.dashboard.helpers({
+  host () {
+    // Get reference to template instance
+    const templateInstance = Template.instance();
+
+    // Return value of Elasticsearch host
+    return templateInstance.elasticsearchHost.get();
+  }
+});
