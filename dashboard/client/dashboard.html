@@ -1,11 +1,19 @@
 <template name="dashboard">
   <div class="container-fluid">
     <h1 class="page-header">API Umbrella Dashboard</h1>
-    <form id="elasticsearch-host" method="post">
-      <input type="text" name="host" placeholder="https://elasticsearch.host:port">
-      <button type="submit" name="set-elasticsearch-host">
-        Set host
-      </button>
-    </form>
+    <div class="row">
+      <div class="col-sm-4">
+        <form id="elasticsearch-host" method="post">
+          <input type="text" name="host" placeholder="https://elasticsearch.host:port">
+          <button type="submit" name="set-elasticsearch-host">
+            Set host
+          </button>
+        </form>
+      </div>
+
+      <div class="col-sm-8">
+        
+      </div>
+    </div>
   </div>
 </template>
