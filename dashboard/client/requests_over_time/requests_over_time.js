@@ -32,7 +32,7 @@ Template.requestsOverTime.onRendered(function () {
         },
       },
       aggs: {
-        data_time: {
+        requests_over_time: {
           date_histogram: {
             field: 'request_at',
             interval: 'month',
