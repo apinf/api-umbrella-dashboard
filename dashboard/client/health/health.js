@@ -6,16 +6,18 @@ Template.elasticsearchHealth.onCreated(function () {
   templateInstance.elasticsearchHealth = new ReactiveVar();
 
   templateInstance.autorun(function () {
-    const host = Template.currentData().host;
+    const elasticsearchHost = Template.currentData().elasticsearchHost;
 
-    Meteor.call('getElasticsearchHealth', host, function (error, health) {
-      if (error) {
-        throw new Meteor.Error(error);
-      } else {
-        // update Elasticsearch health reactive variable
-        templateInstance.elasticsearchHealth.set(health);
-      }
-    });
+    if (elasticsearchHost) {
+      Meteor.call('getElasticsearchHealth', elasticsearchHost, function (error, health) {
+        if (error) {
+          throw new Meteor.Error(error);
+        } else {
+          // update Elasticsearch health reactive variable
+          templateInstance.elasticsearchHealth.set(health);
+        }
+      });
+    }
   });
 });
 
