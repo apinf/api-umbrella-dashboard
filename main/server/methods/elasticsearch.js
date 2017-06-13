@@ -2,49 +2,9 @@
 import ElasticSearch from 'elasticsearch';
 
 Meteor.methods({
-  async getElasticsearchData (host) {
+  async getElasticsearchData (host, queryParams) {
     // Placeholder for Elasticsearch data
     let elasticsearchData;
-
-    // default query parameters
-    const queryParams = {
-      size: 0,
-      body: {
-        query: {
-          filtered: {
-            query: {
-              bool: {
-                should: [
-                  {
-                    wildcard: {
-                      request_path: {
-                        // Add '*' to partially match the url
-                        value: '/*',
-                      },
-                    },
-                  },
-                ],
-              },
-            },
-            filter: {
-              range: {
-                request_at: {
-                },
-              },
-            },
-          },
-        },
-        aggs: {
-          data_time: {
-            date_histogram: {
-              field: 'request_at',
-              interval: 'month',
-              format: 'dd-MM-yyyy'
-            },
-          },
-        },
-      },
-    };
 
     // Initialize Elasticsearch client, using provided host value
     const esClient = new ElasticSearch.Client({ host });
