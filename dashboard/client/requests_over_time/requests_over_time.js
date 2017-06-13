@@ -48,7 +48,7 @@ Template.requestsOverTime.onRendered(function () {
 
     if (elasticsearchHost) {
       // Get Elasticsearch data
-      Meteor.call('getElasticsearchData', host, queryParams, function (error, result) {
+      Meteor.call('getElasticsearchData', elasticsearchHost, queryParams, function (error, result) {
         console.log('error', error);
         console.log('result', result);
       });
