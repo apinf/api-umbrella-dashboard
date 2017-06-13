@@ -72,7 +72,10 @@ Template.requestsOverTime.onRendered(function () {
   // configure x-axis settings for chart
   chart.xAxis
     .axisLabel('Days')
-    .tickFormat(function (d) { return tickMultiFormat(new Date(d)); });
+    .tickFormat(function (d) {
+      // Format tickmarks based on timescale
+      return tickMultiFormat(new Date(d));
+    });
 
   // configure y-axis settings for chart
   chart.yAxis
