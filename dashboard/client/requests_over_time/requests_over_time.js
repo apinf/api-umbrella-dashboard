@@ -125,7 +125,7 @@ Template.requestsOverTime.onRendered(function () {
 
     if (chartData) {
       console.log(chartData);
-      d3.select('#requests-over-time-chart')
+      d3.select('#requests-over-time-chart svg')
         .datum(chartData)
         .transition()
         .call(chart)
