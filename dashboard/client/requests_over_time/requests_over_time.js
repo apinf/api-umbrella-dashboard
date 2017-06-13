@@ -6,6 +6,7 @@ Template.requestsOverTime.onRendered(function () {
   const templateInstance = Template.instance();
 
   templateInstance.elasticsearchData = new ReactiveVar();
+  templateInstance.chartData = new ReactiveVar();
 
   const queryParams = {
     size: 0,
@@ -46,15 +47,29 @@ Template.requestsOverTime.onRendered(function () {
     },
   };
 
+  // Fetch Elasticsearch data reactively
   templateInstance.autorun(function () {
     const elasticsearchHost = Template.currentData().elasticsearchHost;
 
     if (elasticsearchHost) {
       // Get Elasticsearch data
       Meteor.call('getElasticsearchData', elasticsearchHost, queryParams, function (error, result) {
-        console.log('error', error);
-        console.log('result', result);
+        // Update Elasticsearch data reactive variable with result
+        templateInstance.elasticsearchData.set(result);
       });
+    }
+  });
+
+  // Parse chart data reactively
+  templateInstance.autorun(function () {
+    const elasticsearchData = templateInstance.elasticsearchData.get();
+
+    if (elasticsearchData) {
+      // Get aggregations from Elasticsearch data
+      const chartData = elasticsearchData.aggregations.requests_over_time.buckets;
+
+      // Update chart data reactive variable
+      templateInstance.chartData.set(chartData);
     }
   });
 });
