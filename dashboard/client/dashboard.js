@@ -23,7 +23,7 @@ Template.dashboard.events({
 });
 
 Template.dashboard.helpers({
-  host () {
+  elasticsearchHost () {
     // Get reference to template instance
     const templateInstance = Template.instance();
 

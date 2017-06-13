@@ -16,7 +16,7 @@
       </div>
 
       <div class="col-sm-8">
-        {{> elasticsearchHealth host=host }}
+        {{> elasticsearchHealth elasticsearchHost=elasticsearchHost }}
       </div>
 
     </div>
@@ -24,7 +24,7 @@
     <!-- charts -->
     <div class="row">
       <div class="col-sm-4">
-        {{> requestsOverTime }}
+        {{> requestsOverTime elasticsearchHost=elasticsearchHost }}
       </div>
     </div>
   </div>
