@@ -48,14 +48,14 @@ Template.requestsOverTime.onRendered(function () {
     },
   };
 
-  // Date formatter for chart
-  const tickMultiFormat = d3.time.format.multi([
-    ["%-I:%M%p", function(d) { return d.getMinutes(); }], // not the beginning of the hour
-    ["%-I%p", function(d) { return d.getHours(); }], // not midnight
-    ["%b %-d", function(d) { return d.getDate() != 1; }], // not the first of the month
-    ["%b %-d", function(d) { return d.getMonth(); }], // not Jan 1st
-    ["%Y", function() { return true; }]
-  ]);
+  // // Date formatter for chart
+  // const tickMultiFormat = d3.time.format.multi([
+  //   ["%-I:%M%p", function(d) { return d.getMinutes(); }], // not the beginning of the hour
+  //   ["%-I%p", function(d) { return d.getHours(); }], // not midnight
+  //   ["%b %-d", function(d) { return d.getDate() != 1; }], // not the first of the month
+  //   ["%b %-d", function(d) { return d.getMonth(); }], // not Jan 1st
+  //   ["%Y", function() { return true; }]
+  // ]);
 
   // Initialize chart
   const chart = nvd3.models.historicalBarChart();
@@ -74,7 +74,7 @@ Template.requestsOverTime.onRendered(function () {
     .axisLabel('Days')
     .tickFormat(function (d) {
       // Format tickmarks based on timescale
-      return tickMultiFormat(new Date(d));
+      return d3.time.format('%x')(new Date(d))
     });
 
   // configure y-axis settings for chart
