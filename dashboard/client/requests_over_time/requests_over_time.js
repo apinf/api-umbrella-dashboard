@@ -121,6 +121,7 @@ Template.requestsOverTime.onRendered(function () {
     const chartData = templateInstance.chartData.get();
 
     if (chartData) {
+      console.log(chartData);
       d3.select('#requests-over-time-chart')
         .datum(chartData)
         .transition()
