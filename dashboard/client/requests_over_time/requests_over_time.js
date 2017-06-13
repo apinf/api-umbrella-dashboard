@@ -1,3 +1,6 @@
+import d3 from 'd3';
+import nvd3 from 'nvd3';
+
 Template.requestsOverTime.onRendered(function () {
   // Get reference to template instance
   const templateInstance = Template.instance();
