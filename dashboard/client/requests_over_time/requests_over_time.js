@@ -1,5 +1,6 @@
 import d3 from 'd3';
 import nvd3 from 'nvd3';
+import _ from 'lodash';
 
 Template.requestsOverTime.onRendered(function () {
   // Get reference to template instance
@@ -59,19 +60,6 @@ Template.requestsOverTime.onRendered(function () {
   // Initialize chart
   const chart = nvd3.models.historicalBarChart();
 
-  // parse x-axis data
-  chart.x(function (datum){
-    // Return the timestamp
-    return datum.key_as_string;
-  });
-
-  // Parse y-axis data
-  chart.y(function (datum) {
-    console.log(datum);
-    // Return the count of requests
-    return datum.doc_count;
-  });
-
   // configure chart
   chart
     .xScale(d3.time.scale())
@@ -109,8 +97,19 @@ Template.requestsOverTime.onRendered(function () {
 
     if (elasticsearchData) {
       // Get aggregations from Elasticsearch data
-      const chartData = elasticsearchData.aggregations.requests_over_time.buckets;
-      console.log(chartData);
+      const elasticsearchAggregation = elasticsearchData.aggregations.requests_over_time.buckets;
+
+      // format object for NVD3 chart
+      const chartData = _.map(elasticsearchAggregation, function (datum) {
+        // each chart datum should have 'key' and 'values'
+        chartDatum = {
+          key: datum.key_as_string,
+          values: datum.doc_count
+        }
+
+        return chartDatum;
+      });
+
       // Update chart data reactive variable
       templateInstance.chartData.set(chartData);
     }
