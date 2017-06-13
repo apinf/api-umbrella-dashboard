@@ -39,7 +39,7 @@ Meteor.methods({
             // Throw an error
             throw new Meteor.Error(error.message);
       });
-
+      console.log(elasticsearchData);
       return elasticsearchData;
     }
   },
