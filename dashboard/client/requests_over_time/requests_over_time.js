@@ -28,12 +28,6 @@ Template.requestsOverTime.onRendered(function () {
               ],
             },
           },
-          // filter: {
-          //   range: {
-          //     request_at: {
-          //     },
-          //   },
-          // },
         },
       },
       aggs: {
@@ -60,10 +54,7 @@ Template.requestsOverTime.onRendered(function () {
   // configure x-axis settings for chart
   chart.xAxis
     .axisLabel('Days')
-    // .tickFormat(function (d) {
-    //   // Format tickmarks based on timescale
-    //   return d3.time.format('%x')(new Date(d))
-    // });
+
 
   // configure y-axis settings for chart
   chart.yAxis
