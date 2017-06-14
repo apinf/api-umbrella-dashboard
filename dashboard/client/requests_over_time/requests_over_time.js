@@ -82,10 +82,10 @@ Template.requestsOverTime.onRendered(function () {
 
     if (elasticsearchData) {
       // Get aggregations from Elasticsearch data
-      const elasticsearchAggregation = elasticsearchData.aggregations.requests_over_time.buckets;
-      console.log(elasticsearchAggregation);
+      const aggregatedData = elasticsearchData.aggregations.requests_over_time.buckets;
+
       // format object for NVD3 chart
-      const chartDataValues = _.map(elasticsearchAggregation, function (datum) {
+      const chartDataValues = _.map(aggregatedData, function (datum) {
         // each chart datum should have 'key' and 'values'
         chartDatum = {
           x: datum.key,
