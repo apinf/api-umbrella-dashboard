@@ -54,19 +54,16 @@ Template.requestsOverTime.onRendered(function () {
   // configure chart
   chart
     .xScale(d3.time.scale())
-    //.forceX([halfBarXMin, halfBarXMax])
     .margin({left: 100, bottom: 100})
-    //.userInteractiveGuideline(true)
-    .duration(250)
     .showXAxis(true);
 
   // configure x-axis settings for chart
   chart.xAxis
     .axisLabel('Days')
-    .tickFormat(function (d) {
-      // Format tickmarks based on timescale
-      return d3.time.format('%x')(new Date(d))
-    });
+    // .tickFormat(function (d) {
+    //   // Format tickmarks based on timescale
+    //   return d3.time.format('%x')(new Date(d))
+    // });
 
   // configure y-axis settings for chart
   chart.yAxis
@@ -92,17 +89,22 @@ Template.requestsOverTime.onRendered(function () {
     if (elasticsearchData) {
       // Get aggregations from Elasticsearch data
       const elasticsearchAggregation = elasticsearchData.aggregations.requests_over_time.buckets;
-
+      console.log(elasticsearchAggregation);
       // format object for NVD3 chart
-      const chartData = _.map(elasticsearchAggregation, function (datum) {
+      const chartDataValues = _.map(elasticsearchAggregation, function (datum) {
         // each chart datum should have 'key' and 'values'
-        chartDatum = {
-          key: datum.key_as_string,
-          values: datum.doc_count
-        }
+        chartDatum = [
+          datum.key,
+          datum.doc_count
+        ];
 
         return chartDatum;
       });
+
+      const chartData = {
+        key: "Requests over time",
+        values: chartDataValues
+      }
 
       // Update chart data reactive variable
       templateInstance.chartData.set(chartData);
@@ -118,7 +120,6 @@ Template.requestsOverTime.onRendered(function () {
       console.log(chartData);
       d3.select('#requests-over-time-chart svg')
         .datum(chartData)
-        .transition()
         .call(chart)
 
       // Make sure chart is responsive (resize)
