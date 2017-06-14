@@ -104,7 +104,7 @@ Template.requestsOverTime.onRendered(function () {
     const chartData = templateInstance.chartData.get();
 
     if (chartData) {
-      console.log(chartData);
+      // Render the chart with data
       d3.select('#requests-over-time-chart svg')
         .datum(chartData)
         .call(chart)
