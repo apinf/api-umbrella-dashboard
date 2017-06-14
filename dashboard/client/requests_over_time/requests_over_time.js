@@ -56,8 +56,8 @@ Template.requestsOverTime.onRendered(function () {
   // configure x-axis settings for chart
   chart.xAxis
     .axisLabel('Days')
-    // Format dates to human-friendly format
-    .tickFormat(d => d3.time.format('%x')( new Date(d) );
+    // Format dates in m/d/y format
+    .tickFormat(d => d3.time.format('%x')(new Date(d)));
 
   // configure y-axis settings for chart
   chart.yAxis
