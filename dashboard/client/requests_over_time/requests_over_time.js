@@ -47,6 +47,8 @@ Template.requestsOverTime.onRendered(function () {
 
   // configure chart
   chart
+    .x(d => d.key)
+    .y(d => d.doc_count)
     .xScale(d3.time.scale())
     .margin({left: 100, bottom: 100})
     .showXAxis(true);
@@ -84,21 +86,10 @@ Template.requestsOverTime.onRendered(function () {
       // Get aggregations from Elasticsearch data
       const aggregatedData = elasticsearchData.aggregations.requests_over_time.buckets;
 
-      // format object for NVD3 chart
-      const chartDataValues = _.map(aggregatedData, function (datum) {
-        // each chart datum should have 'key' and 'values'
-        chartDatum = {
-          x: datum.key,
-          y: datum.doc_count
-        };
-
-        return chartDatum;
-      });
-
       const chartData = [
         {
           key: "Requests over time",
-          values: chartDataValues
+          values: aggregatedData
         }
       ];
 
