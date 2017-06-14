@@ -93,10 +93,10 @@ Template.requestsOverTime.onRendered(function () {
       // format object for NVD3 chart
       const chartDataValues = _.map(elasticsearchAggregation, function (datum) {
         // each chart datum should have 'key' and 'values'
-        chartDatum = [
-          datum.key,
-          datum.doc_count
-        ];
+        chartDatum = {
+          x: datum.key,
+          y: datum.doc_count
+        };
 
         return chartDatum;
       });
