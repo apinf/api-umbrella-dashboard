@@ -101,10 +101,12 @@ Template.requestsOverTime.onRendered(function () {
         return chartDatum;
       });
 
-      const chartData = {
-        key: "Requests over time",
-        values: chartDataValues
-      }
+      const chartData = [
+        {
+          key: "Requests over time",
+          values: chartDataValues
+        }
+      ];
 
       // Update chart data reactive variable
       templateInstance.chartData.set(chartData);
