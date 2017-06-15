@@ -25,7 +25,10 @@
     <!-- charts -->
     <div class="row">
       <div class="col-sm-6">
-        {{> requestsOverTime elasticsearchHost=elasticsearchHost }}
+        {{> averageResponseTime elasticsearchData=elasticsearchData }}
+      </div>
+      <div class="col-sm-6">
+        {{> requestsOverTime elasticsearchData=elasticsearchData }}
       </div>
     </div>
   </div>
