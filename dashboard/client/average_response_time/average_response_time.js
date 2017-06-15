@@ -40,9 +40,10 @@ Template.averageResponseTime.onRendered(function () {
   // Configure chart
   chart
     .x( d => d.key )
-    .y( d => d.avg_response_time.value )
+    // Save just 2 decimal
+    .y( d => parseFloat(d.avg_response_time.value.toFixed(2)) )
     .xScale(d3.time.scale())
-    .margin({"left": 80, "right": 50, "top": 20, "bottom": 30})
+    .margin({left: 100, bottom: 100})
     .useInteractiveGuideline(true);
 
   // Configure x-axis settings for chart

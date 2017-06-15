@@ -21,7 +21,7 @@ Template.dashboard.onCreated(function () {
                   wildcard: {
                     request_path: {
                       // Add '*' to partially match the url
-                      value: '/test-visionapi*',
+                      value: '/*',
                     },
                   },
                 },
