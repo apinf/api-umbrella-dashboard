@@ -1,6 +1,8 @@
 <template name="dashboard">
   <div class="container-fluid">
     <h1 class="page-header">API Umbrella Dashboard</h1>
+
+    <!-- Elasticsearch host input form and status check -->
     <div class="row">
       <div class="col-sm-4">
         <form id="elasticsearch-host" method="post" class="form-inline">
@@ -16,7 +18,14 @@
       </div>
 
       <div class="col-sm-8">
-        {{> elasticsearchHealth host=host }}
+        {{> elasticsearchHealth elasticsearchHost=elasticsearchHost }}
+      </div>
+    </div>
+
+    <!-- charts -->
+    <div class="row">
+      <div class="col-sm-6">
+        {{> requestsOverTime elasticsearchHost=elasticsearchHost }}
       </div>
     </div>
   </div>
