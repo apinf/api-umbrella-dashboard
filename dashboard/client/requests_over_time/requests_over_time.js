@@ -64,12 +64,12 @@ Template.requestsOverTime.onRendered(function () {
     .axisLabel('Requests');
 
   // Fetch Elasticsearch data reactively
-  templateInstance.autorun(function () {
+  templateInstance.autorun(() => {
     const elasticsearchHost = Template.currentData().elasticsearchHost;
 
     if (elasticsearchHost) {
       // Get Elasticsearch data
-      Meteor.call('getElasticsearchData', elasticsearchHost, queryParams, function (error, result) {
+      Meteor.call('getElasticsearchData', elasticsearchHost, queryParams, (error, result) => {
         // Update Elasticsearch data reactive variable with result
         templateInstance.elasticsearchData.set(result);
       });
@@ -77,7 +77,7 @@ Template.requestsOverTime.onRendered(function () {
   });
 
   // Parse chart data reactively
-  templateInstance.autorun(function () {
+  templateInstance.autorun(() => {
     const elasticsearchData = templateInstance.elasticsearchData.get();
 
     if (elasticsearchData) {
@@ -97,7 +97,7 @@ Template.requestsOverTime.onRendered(function () {
   });
 
   // Render chart reactively
-  templateInstance.autorun(function () {
+  templateInstance.autorun(() => {
     // Get chart data from reactive variable
     const chartData = templateInstance.chartData.get();
 
