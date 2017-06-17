@@ -16,7 +16,6 @@ Template.averageResponseTime.onRendered(function () {
     if (elasticsearchData) {
       // Get aggregations from Elasticsearch data
       const aggregatedData = elasticsearchData.aggregations.requests_over_time.buckets;
-      console.log(aggregatedData)
 
       const chartData = [
         {
