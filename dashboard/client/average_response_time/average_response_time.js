@@ -2,11 +2,32 @@ import d3 from 'd3';
 import nvd3 from 'nvd3';
 import _ from 'lodash';
 
-Template.requestsOverTime.onRendered(function () {
+Template.averageResponseTime.onRendered(function () {
   // Get reference to template instance
   const templateInstance = Template.instance();
 
+  // Placeholder block
   templateInstance.chartData = new ReactiveVar();
+
+  // Parse chart data reactively
+  templateInstance.autorun(() => {
+    const elasticsearchData = Template.currentData().elasticsearchData;
+
+    if (elasticsearchData) {
+      // Get aggregations from Elasticsearch data
+      const aggregatedData = elasticsearchData.aggregations.avg_response_time.buckets;
+
+      const chartData = [
+        {
+          key: 'Time, ms: ',
+          values: aggregatedData
+        }
+      ];
+
+      // Update chart data reactive variable
+      templateInstance.chartData.set(chartData);
+    }
+  });
 
   // Initialize chart
   const chart = nvd3.models.historicalBarChart();
@@ -17,11 +38,12 @@ Template.requestsOverTime.onRendered(function () {
 
   // Configure chart
   chart
-    .x(d => d.key)
-    .y(d => d.doc_count)
+    .x( d => d.key )
+    // Save just 2 decimal
+    .y( d => parseFloat(d.avg_response_time.value.toFixed(2)) )
     .xScale(d3.time.scale())
     .margin({left: 100, bottom: 100})
-    .showXAxis(true);
+    .useInteractiveGuideline(true);
 
   // Configure x-axis settings for chart
   chart.xAxis
@@ -29,30 +51,9 @@ Template.requestsOverTime.onRendered(function () {
     // Format dates in m/d/y format
     .tickFormat(d => d3.time.format('%x')(new Date(d)));
 
-  // configure y-axis settings for chart
+  // Configure y-axis settings for chart
   chart.yAxis
-    .axisLabel('Requests');
-
-
-  // Parse chart data reactively
-  templateInstance.autorun(function () {
-    const elasticsearchData = Template.currentData().elasticsearchData;
-
-    if (elasticsearchData) {
-      // Get aggregations from Elasticsearch data
-      const aggregatedData = elasticsearchData.aggregations.requests_over_time.buckets;
-
-      const chartData = [
-        {
-          key: "Requests over time",
-          values: aggregatedData
-        }
-      ];
-
-      // Update chart data reactive variable
-      templateInstance.chartData.set(chartData);
-    }
-  });
+    .axisLabel('Average response time, ms');
 
   // Render chart reactively
   templateInstance.autorun(() => {
@@ -61,11 +62,11 @@ Template.requestsOverTime.onRendered(function () {
 
     if (chartData) {
       // Render the chart with data
-      d3.select('#requests-over-time-chart svg')
+      d3.select('#average-response-time svg')
         .datum(chartData)
         .attr('width', canvasWidth)
         .attr('height', canvasHeight)
-        .call(chart)
+        .call(chart);
 
       // Make sure chart is responsive (resize)
       nvd3.utils.windowResize(chart.update);
