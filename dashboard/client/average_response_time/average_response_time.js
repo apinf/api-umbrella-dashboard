@@ -15,12 +15,13 @@ Template.averageResponseTime.onRendered(function () {
 
     if (elasticsearchData) {
       // Get aggregations from Elasticsearch data
-      const aggregatedData = elasticsearchData.aggregations.avg_response_time.buckets;
+      const aggregatedData = elasticsearchData.aggregations.requests_over_time.buckets;
 
       const chartData = [
         {
           key: 'Time, ms: ',
-          values: aggregatedData
+          values: aggregatedData,
+          strokeWidth: 2,
         }
       ];
 
@@ -30,7 +31,7 @@ Template.averageResponseTime.onRendered(function () {
   });
 
   // Initialize chart
-  const chart = nvd3.models.historicalBarChart();
+  const chart = nvd3.models.lineChart();
 
   // Set canvas size. TODO: Generate size basing on window size
   const canvasWidth = 700;
@@ -39,11 +40,12 @@ Template.averageResponseTime.onRendered(function () {
   // Configure chart
   chart
     .x( d => d.key )
-    // Save just 2 decimal
-    .y( d => parseFloat(d.avg_response_time.value.toFixed(2)) )
+    // Convert float to int
+    .y( d => Math.round(d.avg_response_time.value) )
     .xScale(d3.time.scale())
     .margin({left: 100, bottom: 100})
-    .useInteractiveGuideline(true);
+    .useInteractiveGuideline(true)
+    .showLegend(false);
 
   // Configure x-axis settings for chart
   chart.xAxis
@@ -59,14 +61,20 @@ Template.averageResponseTime.onRendered(function () {
   templateInstance.autorun(() => {
     // Get chart data from reactive variable
     const chartData = templateInstance.chartData.get();
-
     if (chartData) {
+      const selection = d3.select('#average-response-time svg');
+
       // Render the chart with data
-      d3.select('#average-response-time svg')
-        .datum(chartData)
+      selection.datum(chartData)
         .attr('width', canvasWidth)
         .attr('height', canvasHeight)
         .call(chart);
+
+      // Remove background layout because it's black color by default
+      selection.selectAll(".nv-background").remove();
+      // Remove fill
+      selection.selectAll(".nv-line")
+        .style("fill", "none");
 
       // Make sure chart is responsive (resize)
       nvd3.utils.windowResize(chart.update);
