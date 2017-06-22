@@ -9,7 +9,7 @@ Template.requestsOverTime.onRendered(function () {
   templateInstance.chartData = new ReactiveVar();
 
   // Initialize chart
-  const chart = nvd3.models.historicalBarChart();
+  const chart = nvd3.models.lineChart();
 
   // Set canvas size. TODO: Generate size basing on window size
   const canvasWidth = 700;
@@ -20,8 +20,9 @@ Template.requestsOverTime.onRendered(function () {
     .x(d => d.key)
     .y(d => d.doc_count)
     .xScale(d3.time.scale())
-    .margin({left: 100, bottom: 100})
-    .showXAxis(true);
+    .margin({ left: 100, bottom: 100 })
+    .useInteractiveGuideline(true)  // We want nice looking tooltips and a guideline!
+    .showLegend(false);
 
   // Configure x-axis settings for chart
   chart.xAxis
@@ -44,8 +45,9 @@ Template.requestsOverTime.onRendered(function () {
 
       const chartData = [
         {
-          key: "Requests over time",
-          values: aggregatedData
+          key: 'Request over time: ',
+          values: aggregatedData,
+          strokeWidth: 2,
         }
       ];
 
@@ -61,11 +63,17 @@ Template.requestsOverTime.onRendered(function () {
 
     if (chartData) {
       // Render the chart with data
-      d3.select('#requests-over-time-chart svg')
+      const selection = d3.select('#requests-over-time-chart svg')
         .datum(chartData)
         .attr('width', canvasWidth)
         .attr('height', canvasHeight)
-        .call(chart)
+        .call(chart);
+
+      // Remove background layout because it's black color by default
+      selection.selectAll(".nv-background").remove();
+      // Remove fill
+      selection.selectAll(".nv-line")
+        .style("fill", "none");
 
       // Make sure chart is responsive (resize)
       nvd3.utils.windowResize(chart.update);
