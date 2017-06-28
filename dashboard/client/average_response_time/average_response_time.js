@@ -15,7 +15,7 @@ Template.averageResponseTime.onRendered(function () {
 
     if (elasticsearchData) {
       // Get aggregations from Elasticsearch data
-      const aggregatedData = elasticsearchData.aggregations.avg_response_time.buckets;
+      const aggregatedData = elasticsearchData.aggregations.requests_over_time.buckets;
 
       const chartData = [
         {
@@ -39,10 +39,10 @@ Template.averageResponseTime.onRendered(function () {
   // Configure chart
   chart
     .x( d => d.key )
-    // Save just 2 decimal
-    .y( d => parseFloat(d.avg_response_time.value.toFixed(2)) )
+    // Parse to int
+    .y( d => parseInt(d.percentiles_response_time.values['95.0'], 10))
     .xScale(d3.time.scale())
-    .margin({left: 100, bottom: 100})
+    .margin({ left: 100, bottom: 100 })
     .useInteractiveGuideline(true);
 
   // Configure x-axis settings for chart
