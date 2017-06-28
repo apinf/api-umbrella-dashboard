@@ -1,6 +1,8 @@
 import { ReactiveVar } from 'meteor/reactive-var'
 import { Template } from 'meteor/templating';
 
+import moment from 'moment';
+
 Template.dashboard.onCreated(function () {
   // Get reference to template instance
   const templateInstance = this;
@@ -9,8 +11,12 @@ Template.dashboard.onCreated(function () {
   templateInstance.elasticsearchHost = new ReactiveVar();
   templateInstance.elasticsearchData = new ReactiveVar();
 
+  // Create interval Last 7 days
+  const today = moment().format('YYYY-MM-DD');
+  const sevenDaysAgo = moment().subtract(7, 'days').format('YYYY-MM-DD');
+
   const queryParams = {
-    size: 0,
+    size: 5000,
     body: {
       query: {
         filtered: {
@@ -28,24 +34,41 @@ Template.dashboard.onCreated(function () {
               ],
             },
           },
-        },
-      },
-      aggs: {
-        // Create data range with interval
-        requests_over_time: {
-          date_histogram: {
-            field: 'request_at',
-            interval: 'month',
-          },
-          aggs: {
-            // Get average value of response time for each range
-            avg_response_time: {
-              avg: {
-                field: 'response_time'
+          filter: {
+            range: {
+              request_at: {
+                lte: today,
+                gte: sevenDaysAgo
               }
             }
           }
         },
+      },
+      // Get 'user_id' field for calculating number of Unique users
+      fields: ['user_id'],
+      aggs: {
+        // Interval is day, date range is week
+        requests_over_time: {
+          date_histogram: {
+            field: 'request_at',
+            interval: 'day',
+          },
+          aggs: {
+            // Get 95 percentiles (average) response time for each specified interval (day, week or month and etc)
+            percentiles_response_time: {
+              percentiles: {
+                field: 'response_time',
+                percents: [95]
+              }
+            }
+          }
+        },
+        // Calculate summary average response time for specified date range
+        total_avg_response_time: {
+          avg: {
+            field: 'response_time'
+          }
+        }
       },
     },
   };
