@@ -1,6 +1,5 @@
 import d3 from 'd3';
 import nvd3 from 'nvd3';
-import _ from 'lodash';
 
 Template.averageResponseTime.onRendered(function () {
   // Get reference to template instance
@@ -11,38 +10,33 @@ Template.averageResponseTime.onRendered(function () {
 
   // Parse chart data reactively
   templateInstance.autorun(() => {
-    const elasticsearchData = Template.currentData().elasticsearchData;
+    const elasticsearchData = Template.currentData().aggregations.buckets;
 
-    if (elasticsearchData) {
-      // Get aggregations from Elasticsearch data
-      const aggregatedData = elasticsearchData.aggregations.avg_response_time.buckets;
+    const chartData = [
+      {
+        key: 'Time, ms: ',
+        values: elasticsearchData
+      }
+    ];
 
-      const chartData = [
-        {
-          key: 'Time, ms: ',
-          values: aggregatedData
-        }
-      ];
-
-      // Update chart data reactive variable
-      templateInstance.chartData.set(chartData);
-    }
+    // Update chart data reactive variable
+    templateInstance.chartData.set(chartData);
   });
 
   // Initialize chart
   const chart = nvd3.models.historicalBarChart();
 
   // Set canvas size. TODO: Generate size basing on window size
-  const canvasWidth = 700;
-  const canvasHeight = 500;
+  const canvasWidth = 400;
+  const canvasHeight = 200;
 
   // Configure chart
   chart
     .x( d => d.key )
-    // Save just 2 decimal
-    .y( d => parseFloat(d.avg_response_time.value.toFixed(2)) )
+    // Parse to int
+    .y( d => parseInt(d.percentiles_response_time.values['95.0'], 10))
     .xScale(d3.time.scale())
-    .margin({left: 100, bottom: 100})
+    .margin({ left: 100, bottom: 100 })
     .useInteractiveGuideline(true);
 
   // Configure x-axis settings for chart
@@ -53,7 +47,7 @@ Template.averageResponseTime.onRendered(function () {
 
   // Configure y-axis settings for chart
   chart.yAxis
-    .axisLabel('Average response time, ms');
+    .axisLabel('Time, ms');
 
   // Render chart reactively
   templateInstance.autorun(() => {
@@ -62,7 +56,7 @@ Template.averageResponseTime.onRendered(function () {
 
     if (chartData) {
       // Render the chart with data
-      d3.select('#average-response-time svg')
+      d3.select(`[data-id="${templateInstance.data.attr}"] .average-response-time svg`)
         .datum(chartData)
         .attr('width', canvasWidth)
         .attr('height', canvasHeight)
