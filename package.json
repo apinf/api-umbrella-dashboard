@@ -10,6 +10,7 @@
     "elasticsearch": "^13.0.1",
     "lodash": "^4.17.4",
     "meteor-node-stubs": "~0.2.4",
+    "moment": "^2.18.1",
     "nvd3": "^1.8.5"
   }
 }
