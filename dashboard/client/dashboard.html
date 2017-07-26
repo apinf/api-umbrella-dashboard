@@ -16,20 +16,9 @@
           </button>
         </form>
       </div>
-
-      <div class="col-sm-8">
-        {{> elasticsearchHealth elasticsearchHost=elasticsearchHost }}
-      </div>
     </div>
 
-    <!-- charts -->
-    <div class="row">
-      <div class="col-sm-6">
-        {{> averageResponseTime elasticsearchData=elasticsearchData }}
-      </div>
-      <div class="col-sm-6">
-        {{> requestsOverTime elasticsearchData=elasticsearchData }}
-      </div>
-    </div>
+    <!-- Table with summary statistic-->
+    {{> summaryStatistic elasticsearchData=elasticsearchData }}
   </div>
 </template>
