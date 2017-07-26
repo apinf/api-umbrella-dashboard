@@ -1,13 +1,19 @@
 import { ReactiveVar } from 'meteor/reactive-var'
 import { Template } from 'meteor/templating';
 
+import moment from 'moment';
+
 Template.dashboard.onCreated(function () {
   // Get reference to template instance
   const templateInstance = this;
 
   // Create reactive variable for Elasticsearch host & data
-  templateInstance.elasticsearchHost = new ReactiveVar();
+  templateInstance.elasticsearchHost = new ReactiveVar('http://nightly.apinf.io:14002');
   templateInstance.elasticsearchData = new ReactiveVar();
+
+  // Create interval Last 7 days
+  const today = moment().format('YYYY-MM-DD');
+  const sevenDaysAgo = moment().subtract(17, 'days').format('YYYY-MM-DD');
 
   const queryParams = {
     size: 0,
@@ -16,35 +22,74 @@ Template.dashboard.onCreated(function () {
         filtered: {
           query: {
             bool: {
+              // TODO: Create an automatical generation of a request_path list
               should: [
                 {
                   wildcard: {
                     request_path: {
                       // Add '*' to partially match the url
-                      value: '/*',
+                      value: '/gaagol/*',
                     },
                   },
+                },
+                {
+                  wildcard: {
+                    request_path: {
+                      // Add '*' to partially match the url
+                      value: '/api-umbrella/*',
+                    },
+                  }
                 },
               ],
             },
           },
-        },
-      },
-      aggs: {
-        // Create data range with interval
-        requests_over_time: {
-          date_histogram: {
-            field: 'request_at',
-            interval: 'month',
-          },
-          aggs: {
-            // Get average value of response time for each range
-            avg_response_time: {
-              avg: {
-                field: 'response_time'
+          filter: {
+            range: {
+              request_at: {
+                lte: today,
+                gte: sevenDaysAgo
               }
             }
           }
+        },
+      },
+      aggs: {
+        // Get summary statisctic for each request_path
+        group_by_request_path: {
+          // get numberof calls
+          terms: {
+            field: 'request_path'
+          },
+          aggs: {
+            // get response time for each request_path
+            response_time: {
+              percentiles: {
+                field: 'response_time',
+                percents: [95]
+              }
+            },
+            // get user_id for each request_path
+            unique_users: {
+              terms: {
+                field: 'user_id'
+              }
+            },
+            // get number of request for each day in week
+            requests_over_time: {
+              date_histogram: {
+                field: 'request_at',
+                interval: 'day',
+              },
+              aggs: {
+                percentiles_response_time: {
+                  percentiles: {
+                    field: 'response_time',
+                    percents: [95]
+                  }
+                }
+              }
+            },
+          },
         },
       },
     },
