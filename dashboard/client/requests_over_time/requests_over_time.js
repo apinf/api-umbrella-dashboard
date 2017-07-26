@@ -1,6 +1,5 @@
 import d3 from 'd3';
 import nvd3 from 'nvd3';
-import _ from 'lodash';
 
 Template.requestsOverTime.onRendered(function () {
   // Get reference to template instance
@@ -12,15 +11,15 @@ Template.requestsOverTime.onRendered(function () {
   const chart = nvd3.models.historicalBarChart();
 
   // Set canvas size. TODO: Generate size basing on window size
-  const canvasWidth = 700;
-  const canvasHeight = 500;
+  const canvasWidth = 400;
+  const canvasHeight = 200;
 
   // Configure chart
   chart
     .x(d => d.key)
     .y(d => d.doc_count)
     .xScale(d3.time.scale())
-    .margin({left: 100, bottom: 100})
+    .margin({ left: 100, bottom: 100 })
     .showXAxis(true);
 
   // Configure x-axis settings for chart
@@ -33,25 +32,19 @@ Template.requestsOverTime.onRendered(function () {
   chart.yAxis
     .axisLabel('Requests');
 
-
   // Parse chart data reactively
-  templateInstance.autorun(function () {
-    const elasticsearchData = Template.currentData().elasticsearchData;
+  templateInstance.autorun(() => {
+    const elasticsearchData = Template.currentData().aggregations.buckets;
 
-    if (elasticsearchData) {
-      // Get aggregations from Elasticsearch data
-      const aggregatedData = elasticsearchData.aggregations.requests_over_time.buckets;
+    const chartData = [
+      {
+        key: "Requests over time",
+        values: elasticsearchData
+      }
+    ];
 
-      const chartData = [
-        {
-          key: "Requests over time",
-          values: aggregatedData
-        }
-      ];
-
-      // Update chart data reactive variable
-      templateInstance.chartData.set(chartData);
-    }
+    // Update chart data reactive variable
+    templateInstance.chartData.set(chartData);
   });
 
   // Render chart reactively
@@ -61,7 +54,7 @@ Template.requestsOverTime.onRendered(function () {
 
     if (chartData) {
       // Render the chart with data
-      d3.select('#requests-over-time-chart svg')
+      d3.select(`[data-id="${templateInstance.data.attr}"] .requests-over-time-chart svg`)
         .datum(chartData)
         .attr('width', canvasWidth)
         .attr('height', canvasHeight)
