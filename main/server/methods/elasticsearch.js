@@ -43,25 +43,4 @@ Meteor.methods({
       return elasticsearchData;
     }
   },
-  async getElasticsearchHealth (host) {
-    // Initialize Elasticsearch client, using provided host value
-    const esClient = new ElasticSearch.Client({ host });
-
-    // Check if we can connect to Elasticsearch
-    const elasticsearchHealth = await esClient.cat.health({
-      format: 'json',
-    })
-    .then(
-      (response) => {
-        // Return Elasticsearch health
-        return response;
-      },
-      (error) => {
-        // Throw an error
-        throw new Meteor.Error(error.message);
-      }
-    )
-
-    return elasticsearchHealth;
-  }
 });
