@@ -1,5 +1,4 @@
 <template name="summaryStatistic">
-  {{#if elasticsearchData }}
     <table class="table">
       <thead>
       <tr>
@@ -23,7 +22,4 @@
       {{/ each }}
       </tbody>
     </table>
-  {{ else }}
-    {{> spinner }}
-  {{/ if }}
 </template>
