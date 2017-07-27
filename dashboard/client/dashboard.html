@@ -17,8 +17,17 @@
         </form>
       </div>
     </div>
-
-    <!-- Table with summary statistic-->
-    {{> summaryStatistic elasticsearchData=elasticsearchData }}
+    {{# unless fetchingData }}
+      {{> spinner }}
+    {{ else }}
+      {{# if error }}
+        <h1>ElasticSearch query error</h1>
+        <p>{{ error }}</p>
+      {{/ if }}
+      {{# if elasticsearchData }}
+        <!-- Table with summary statistic-->
+        {{> summaryStatistic elasticsearchData=elasticsearchData }}
+      {{/ if }}
+    {{/ unless }}
   </div>
 </template>

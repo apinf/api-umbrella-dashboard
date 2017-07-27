@@ -10,10 +10,12 @@ Template.dashboard.onCreated(function () {
   // Create reactive variable for Elasticsearch host & data
   templateInstance.elasticsearchHost = new ReactiveVar('http://nightly.apinf.io:14002');
   templateInstance.elasticsearchData = new ReactiveVar();
+  templateInstance.error = new ReactiveVar();
 
-  // Create interval Last 7 days
-  const today = moment().format('YYYY-MM-DD');
-  const sevenDaysAgo = moment().subtract(17, 'days').format('YYYY-MM-DD');
+  // Plus one day to include current day in selection
+  const today = moment().add(1, 'days').format('YYYY-MM-DD');
+  const sevenDaysAgo = moment().subtract(15, 'days').format('YYYY-MM-DD');
+  const doubleSevenDaysAgo = moment().subtract(30, 'days').format('YYYY-MM-DD');
 
   const queryParams = {
     size: 0,
@@ -36,7 +38,7 @@ Template.dashboard.onCreated(function () {
                   wildcard: {
                     request_path: {
                       // Add '*' to partially match the url
-                      value: '/api-umbrella/*',
+                      value: '/api-umbrella/v1/analytics/drilldown.json',
                     },
                   }
                 },
@@ -46,47 +48,70 @@ Template.dashboard.onCreated(function () {
           filter: {
             range: {
               request_at: {
-                lte: today,
-                gte: sevenDaysAgo
+                lt: today,
+                gte: doubleSevenDaysAgo // Extend request to both interval. It needs to compare two interval
               }
             }
           }
         },
       },
       aggs: {
-        // Get summary statisctic for each request_path
+        // Get summary statistic for each request_path
         group_by_request_path: {
-          // get numberof calls
+          // get number of calls
           terms: {
             field: 'request_path'
           },
           aggs: {
-            // get response time for each request_path
-            response_time: {
-              percentiles: {
-                field: 'response_time',
-                percents: [95]
-              }
-            },
-            // get user_id for each request_path
-            unique_users: {
-              terms: {
-                field: 'user_id'
-              }
-            },
-            // get number of request for each day in week
-            requests_over_time: {
-              date_histogram: {
+            // Get statistic for each period(current and previous)
+            group_by_interval: {
+              range: {
                 field: 'request_at',
-                interval: 'day',
+                keyed : true,
+                // includes the *from* value and excludes the *to* value for each range.
+                ranges: [
+                  {
+                    key : 'previousWeek',
+                    from: doubleSevenDaysAgo,
+                    to: sevenDaysAgo,
+                  },
+                  {
+                    key : 'currentWeek',
+                    from: sevenDaysAgo,
+                    to: today,
+                  },
+                ],
               },
               aggs: {
-                percentiles_response_time: {
+                // get response time for each request_path  and for each period
+                response_time: {
                   percentiles: {
                     field: 'response_time',
                     percents: [95]
+                  },
+                },
+                // get user_id for each request_path and for each period
+                unique_users: {
+                  terms: {
+                    field: 'user_id'
+                  },
+                },
+                // get number of request for each day in week and for each period
+                requests_over_time: {
+                  date_histogram: {
+                    field: 'request_at',
+                    interval: 'day',
+                  },
+                  aggs: {
+                    // get the average response time over interval
+                    percentiles_response_time: {
+                      percentiles: {
+                        field: 'response_time',
+                        percents: [95]
+                      }
+                    }
                   }
-                }
+                },
               }
             },
           },
@@ -102,6 +127,12 @@ Template.dashboard.onCreated(function () {
     if (elasticsearchHost) {
       // Get Elasticsearch data
       Meteor.call('getElasticsearchData', elasticsearchHost, queryParams, (error, result) => {
+
+        if (error) {
+          templateInstance.error.set(error);
+          throw Meteor.Error(error)
+        }
+
         // Update Elasticsearch data reactive variable with result
         templateInstance.elasticsearchData.set(result);
       });
@@ -117,6 +148,14 @@ Template.dashboard.helpers({
 
     // Return value of Elasticsearch host
     return templateInstance.elasticsearchData.get();
+  },
+  fetchingData () {
+    const templateInstance = Template.instance();
+    return templateInstance.elasticsearchData.get() || templateInstance.error.get();
+  },
+  error () {
+    const templateInstance = Template.instance();
+    return templateInstance.error.get();
   }
 });
 
