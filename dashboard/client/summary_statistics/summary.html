@@ -1,25 +1,43 @@
 <template name="summaryStatistic">
-    <table class="table">
-      <thead>
-      <tr>
-        <th>API path</th>
-        <th>Number of request</th>
-        <th>Response time, ms</th>
-        <th>Unique users</th>
-      </tr>
-      </thead>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>API path</th>
+      <th>Number of request</th>
+      <th>Response time, ms</th>
+      <th>Unique users</th>
+    </tr>
+    </thead>
 
-      <tbody>
-      {{# each bucket in buckets }}
-        <tr data-id="{{ bucket.attr }}">
-          <td>{{ bucket.requestPath }}</td>
-          <td>{{ bucket.requestNumber }}</td>
-          <td>{{ bucket.responseTime }}</td>
-          <td>{{ bucket.uniqueUsers }}</td>
-          <td>{{> requestsOverTime aggregations=bucket.requestOverTime attr=bucket.attr }}</td>
-          <td>{{> averageResponseTime aggregations=bucket.averageResponseTime attr=bucket.attr }}</td>
+    <tbody>
+    {{# each bucket in buckets }}
+      {{# with bucket }}
+        <tr data-id="{{ attr }}">
+          <td>{{ requestPath }}
+          </td>
+          <td>
+            <div class="{{ arrowDirection 'requests' }}">
+              {{ requestNumber }}
+              {{ percentages 'requests' }}
+            </div>
+          </td>
+          <td>
+            <div class="{{ arrowDirection 'response' }}">
+              {{ responseTime }}
+              {{ percentages 'response' }}
+            </div>
+          </td>
+          <td>
+            <div class="{{ arrowDirection 'users' }}">
+              {{ uniqueUsers }}
+              {{ percentages 'users' }}
+            </div>
+          </td>
+          <td>{{> requestsOverTime aggregations=requestOverTime attr=attr }}</td>
+          <td>{{> averageResponseTime aggregations=averageResponseTime attr=attr }}</td>
         </tr>
-      {{/ each }}
-      </tbody>
-    </table>
+      {{/ with }}
+    {{/ each }}
+    </tbody>
+  </table>
 </template>
