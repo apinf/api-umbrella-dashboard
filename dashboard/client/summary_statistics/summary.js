@@ -10,7 +10,7 @@ Template.summaryStatistic.onCreated( function () {
     // If current value is 0 then progress is down on 100%
     if (curr === 0) return -100;
 
-    return (curr / prev - 1) * 100;
+    return Math.round((curr / prev - 1) * 100);
   }
 });
 
@@ -88,16 +88,16 @@ Template.summaryStatistic.helpers({
 
     switch(parameter) {
       case 'requests': {
-        percentage = Math.round(Math.abs(this.compareRequests))
+        percentage = Math.abs(this.compareRequests)
       }
         break;
       case 'response': {
-        percentage = Math.round(Math.abs(this.compareResponse))
+        percentage = Math.abs(this.compareResponse)
 
       }
         break;
       case 'users': {
-        percentage = Math.round(Math.abs(this.compareUsers))
+        percentage = Math.abs(this.compareUsers)
       }
     }
 
