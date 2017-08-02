@@ -109,7 +109,12 @@ Template.dashboard.onCreated(function () {
                         field: 'response_time',
                         percents: [95]
                       }
-                    }
+                    },
+                    unique_users: {
+                      terms: {
+                        field: 'user_id'
+                      },
+                    },
                   }
                 },
               }
@@ -157,4 +162,3 @@ Template.dashboard.helpers({
     return templateInstance.error.get();
   }
 });
-
