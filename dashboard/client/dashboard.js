@@ -140,7 +140,6 @@ Template.dashboard.onCreated(function () {
   });
 });
 
-
 Template.dashboard.helpers({
   elasticsearchData () {
     // Get reference to template instance
@@ -159,15 +158,3 @@ Template.dashboard.helpers({
   }
 });
 
-Template.dashboard.events({
-  'submit #elasticsearch-host' (event, templateInstance) {
-    // prevent default form action
-    event.preventDefault();
-
-    // Get Elasticsearch host from form
-    const host = event.target.host.value;
-
-    // Update Elasticsearch host reactive variable
-    templateInstance.elasticsearchHost.set(host);
-  }
-});
