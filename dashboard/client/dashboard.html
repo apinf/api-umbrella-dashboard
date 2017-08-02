@@ -2,21 +2,6 @@
   <div class="container-fluid">
     <h1 class="page-header">API Umbrella Dashboard</h1>
 
-    <!-- Elasticsearch host input form and status check -->
-    <div class="row">
-      <div class="col-sm-4">
-        <form id="elasticsearch-host" method="post" class="form-inline">
-          <div class="form-group">
-            <label for="host">Host</label>
-            <input type="text" name="host" id="host" class="form-control" placeholder="https://elasticsearch.host:port">
-          </div>
-
-          <button type="submit" name="set-elasticsearch-host" class="btn btn-default">
-            Set host
-          </button>
-        </form>
-      </div>
-    </div>
     {{# unless fetchingData }}
       {{> spinner }}
     {{ else }}
@@ -26,7 +11,7 @@
       {{/ if }}
       {{# if elasticsearchData }}
         <!-- Table with summary statistic-->
-        {{> summaryStatistic elasticsearchData=elasticsearchData }}
+        {{> dashboardSummaryStatistic elasticsearchData=elasticsearchData }}
       {{/ if }}
     {{/ unless }}
   </div>
