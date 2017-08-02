@@ -1,6 +1,9 @@
-Template.summaryStatistic.onCreated( function () {
-  this.calcComparing = (prev, curr) => {
-    // If values are equeled then no up-down
+import { arrowDirection, percentageValue } from '../compare_indicating';
+
+Template.dashboardSummaryStatistic.onCreated( function () {
+  this.calculateTrend = (prev, curr) => {
+    // If values are equal
+    // then no up-down
     if (prev === curr) return 0;
 
     // it is impossible to divide on 0
@@ -14,7 +17,7 @@ Template.summaryStatistic.onCreated( function () {
   }
 });
 
-Template.summaryStatistic.helpers({
+Template.dashboardSummaryStatistic.helpers({
   buckets () {
     const templateInstance = Template.instance();
     // Get ES data
@@ -33,11 +36,11 @@ Template.summaryStatistic.helpers({
       const uniqueUsers = currentPeriodBucket.unique_users.buckets.length;
 
       // Get the statistics comparing between previous and current periods
-      const compareRequests = templateInstance.calcComparing(previousPeriodBucket.doc_count, requestNumber);
-      const compareResponse = templateInstance.calcComparing(
+      const compareRequests = templateInstance.calculateTrend(previousPeriodBucket.doc_count, requestNumber);
+      const compareResponse = templateInstance.calculateTrend(
         parseInt(previousPeriodBucket.response_time.values['95.0'], 10), responseTime
       );
-      const compareUsers = templateInstance.calcComparing(
+      const compareUsers = templateInstance.calculateTrend(
         previousPeriodBucket.unique_users.buckets.length, uniqueUsers
       );
 
@@ -60,48 +63,38 @@ Template.summaryStatistic.helpers({
     });
   },
   arrowDirection (parameter) {
-    let style;
-
-    switch(parameter) {
-      case 'requests': {
-        style = this.compareRequests === 0 ? undefined :
-          this.compareRequests > 0 ? 'arrow-up' : 'arrow-down';
-      }
-      break;
-      case 'response': {
-        // decrease: green & increase: red for response_time
-        style = this.compareResponse === 0 ? undefined :
-          this.compareResponse < 0 ? 'arrow-up' : 'arrow-down';
-      }
-      break;
-      case 'users': {
-        style = this.compareUsers === 0 ? undefined :
-          this.compareUsers > 0 ? 'arrow-up' : 'arrow-down';
-      }
-    }
-
-    // if style is undefined that don't display an arrow indicating
-    return style;
+    // Provide compared data
+    return arrowDirection(parameter, this);
   },
   percentages (parameter) {
-    let percentage;
+    // Provide compared data
+    return percentageValue(parameter, this);
+  },
+  textColor (parameter) {
+    let textColor;
+    const direction = arrowDirection(parameter, this);
 
-    switch(parameter) {
-      case 'requests': {
-        percentage = Math.abs(this.compareRequests)
-      }
-        break;
-      case 'response': {
-        percentage = Math.abs(this.compareResponse)
-
-      }
-        break;
-      case 'users': {
-        percentage = Math.abs(this.compareUsers)
-      }
+    // Green color for text -  percentage value near arrow
+    if (direction === 'arrow-up' || direction === 'arrow-down_time') {
+      textColor =  'text-success';
     }
 
-    // don't display 0%
-    return percentage > 0 ? percentage + '%' : '';
+    // Red color for text - percentage value near arrow
+    if (direction === 'arrow-down' || direction === 'arrow-up_time') {
+      textColor = 'text-danger';
+    }
+
+    return textColor;
   }
+});
+
+Template.dashboardSummaryStatistic.events({
+  'click [data-id]': (event) => {
+    const target = event.currentTarget;
+
+    // Draw the box-shadow
+    target.classList.toggle('open');
+    // Display a template with the related overview data
+    target.nextElementSibling.classList.toggle('hidden');
+  },
 });
