@@ -34,6 +34,7 @@ Template.dashboardSummaryStatistic.helpers({
       const requestNumber = currentPeriodBucket.doc_count;
       const responseTime = parseInt(currentPeriodBucket.response_time.values['95.0'], 10);
       const uniqueUsers = currentPeriodBucket.unique_users.buckets.length;
+      const successCallsCount = currentPeriodBucket.success_status.buckets['success'].doc_count;
 
       // Get the statistics comparing between previous and current periods
       const compareRequests = templateInstance.calculateTrend(previousPeriodBucket.doc_count, requestNumber);
@@ -52,6 +53,7 @@ Template.dashboardSummaryStatistic.helpers({
         requestNumber,
         responseTime,
         uniqueUsers,
+        successCallsCount,
         requestOverTime: currentPeriodBucket.requests_over_time,
         averageResponseTime: currentPeriodBucket.requests_over_time,
         compareRequests,
