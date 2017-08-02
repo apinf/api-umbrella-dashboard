@@ -96,6 +96,16 @@ Template.dashboard.onCreated(function () {
                     field: 'user_id'
                   },
                 },
+                // get count of success calls (2xx)
+                success_status: {
+                  range : {
+                    field : 'response_status',
+                    keyed: true,
+                    ranges : [
+                      { key: 'success', from : 200, to : 300 },
+                    ]
+                  }
+                },
                 // get number of request for each day in week and for each period
                 requests_over_time: {
                   date_histogram: {
