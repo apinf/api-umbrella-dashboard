@@ -1,0 +1,82 @@
+<template name="dashboardOverviewStatistic">
+  {{# with bucket }}
+    <div class="hidden overview-body" data-id="{{ attr }}">
+      <div class="row overview-line">
+        <div class="col-md-3">
+          <span class="overview-col-title">
+            API Name
+          </span>
+        </div>
+        <div class="col-md-3">
+          <span class="overview-col-title">
+            {{ requestNumber }}
+          </span>
+        </div>
+        <div class="col-md-3">
+          <span class="overview-col-title">
+            {{ responseTime }}ms
+          </span>
+        </div>
+        <div class="col-md-3">
+          <span class="overview-col-title">
+            {{ uniqueUsers }}
+          </span>
+        </div>
+      </div>
+
+      <div class="row overview-line">
+        <div class="col-md-3">
+          <p>Proxy: APi-Umbrella</p>
+          <p>Endpoint: LIVE</p>
+          <p class="text-success">
+            2XX calls: 500
+          </p>
+        </div>
+        <div class="col-md-3">
+          <span class="overview-col-title">
+            Number of requests
+          </span>
+          {{> requestsOverTime aggregations=requestOverTime attr=attr }}
+        </div>
+        <div class="col-md-3">
+          <span class="overview-col-title">
+            API Response time
+          </span>
+          {{> averageResponseTime aggregations=averageResponseTime attr=attr }}
+        </div>
+        <div class="col-md-3">
+          <span class="overview-col-title">
+            Unique API Users
+          </span>
+          {{> uniqueUsersOverTime aggregations=requestOverTime attr=attr }}
+        </div>
+      </div>
+      <div class="row overview-line">
+        <div class="col-md-3">
+          <span class="text-danger">
+            24 errors in last 7 days
+          </span>
+        </div>
+        <div class="col-md-3">
+          <div class="{{ arrowDirection 'requests' }}"></div>
+          <span>{{ overviewComparing 'requests' }}</span>
+        </div>
+        <div class="col-md-3">
+          <div class="{{ arrowDirection 'response' }}"></div>
+          <span>{{ overviewComparing 'response' }}</span>
+        </div>
+        <div class="col-md-3">
+          <div class="{{ arrowDirection 'users' }}"></div>
+          <span>{{ overviewComparing 'users' }}</span>
+        </div>
+      </div>
+      <div class="row overview-line">
+        <div class="col-md-offset-9 col-md-3">
+          <a href="" class="pull-right">
+            View details ...
+          </a>
+        </div>
+      </div>
+    </div>
+  {{/ with }}
+</template>
