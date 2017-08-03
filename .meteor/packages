@@ -19,3 +19,6 @@ shell-server@0.2.3            # Server-side component of the `meteor shell` comm
 twbs:bootstrap
 dynamic-import
 sacha:spin
+kadira:flow-router
+kadira:blaze-layout
+arillo:flow-router-helpers
