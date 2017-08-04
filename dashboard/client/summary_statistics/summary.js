@@ -1,25 +1,7 @@
-import { arrowDirection, percentageValue } from '../compare_indicating';
-
-Template.dashboardSummaryStatistic.onCreated( function () {
-  this.calculateTrend = (prev, curr) => {
-    // If values are equal
-    // then no up-down
-    if (prev === curr) return 0;
-
-    // it is impossible to divide on 0
-    // If previous value is 0 then progress is up on 100%
-    if (prev === 0) return 100;
-
-    // If current value is 0 then progress is down on 100%
-    if (curr === 0) return -100;
-
-    return Math.round((curr / prev - 1) * 100);
-  }
-});
+import { arrowDirection, percentageValue, calculateTrend } from '../compare_indicating';
 
 Template.dashboardSummaryStatistic.helpers({
   buckets () {
-    const templateInstance = Template.instance();
     // Get ES data
     const elasticsearchData = Template.currentData().elasticsearchData;
 
@@ -35,13 +17,14 @@ Template.dashboardSummaryStatistic.helpers({
       const responseTime = parseInt(currentPeriodBucket.response_time.values['95.0'], 10);
       const uniqueUsers = currentPeriodBucket.unique_users.buckets.length;
       const successCallsCount = currentPeriodBucket.success_status.buckets['success'].doc_count;
+      const errorCallsCount = currentPeriodBucket.success_status.buckets['error'].doc_count;
 
       // Get the statistics comparing between previous and current periods
-      const compareRequests = templateInstance.calculateTrend(previousPeriodBucket.doc_count, requestNumber);
-      const compareResponse = templateInstance.calculateTrend(
+      const compareRequests = calculateTrend(previousPeriodBucket.doc_count, requestNumber);
+      const compareResponse = calculateTrend(
         parseInt(previousPeriodBucket.response_time.values['95.0'], 10), responseTime
       );
-      const compareUsers = templateInstance.calculateTrend(
+      const compareUsers = calculateTrend(
         previousPeriodBucket.unique_users.buckets.length, uniqueUsers
       );
 
@@ -54,6 +37,7 @@ Template.dashboardSummaryStatistic.helpers({
         responseTime,
         uniqueUsers,
         successCallsCount,
+        errorCallsCount,
         requestOverTime: currentPeriodBucket.requests_over_time,
         averageResponseTime: currentPeriodBucket.requests_over_time,
         compareRequests,

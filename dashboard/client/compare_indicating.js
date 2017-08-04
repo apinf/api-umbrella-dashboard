@@ -43,3 +43,36 @@ export function percentageValue (parameter, bucket) {
   // don't display 0%
   return percentage > 0 ? percentage + '%' : '';
 }
+
+export function calculateTrend (prev, curr) {
+  // If values are equal
+  // then no up-down
+  if (prev === curr) return 0;
+
+  // it is impossible to divide on 0
+  // If previous value is 0 then progress is up on 100%
+  if (prev === 0) return 100;
+
+  // If current value is 0 then progress is down on 100%
+  if (curr === 0) return -100;
+
+  return Math.round((curr / prev - 1) * 100);
+}
+
+export function summaryComparing (parameter, bucket) {
+  const direction = arrowDirection(parameter, bucket);
+  const percentages = percentageValue(parameter, bucket);
+  let trend;
+
+  if (direction && percentages) {
+    if (direction === 'arrow-up' || direction === 'arrow-down_time') {
+      trend = 'higher';
+    } else {
+      trend = 'lower';
+    }
+
+    return `${percentages} ${trend} than last 7 days`
+  }
+
+  return '';
+}
