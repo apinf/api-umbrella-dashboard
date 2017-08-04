@@ -103,6 +103,7 @@ Template.dashboard.onCreated(function () {
                     keyed: true,
                     ranges : [
                       { key: 'success', from : 200, to : 300 },
+                      { key: 'error', from : 500, to : 600 },
                     ]
                   }
                 },
