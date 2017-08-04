@@ -32,7 +32,7 @@ Template.uniqueUsersOverTime.onRendered(function () {
 
   // configure y-axis settings for chart
   chart.yAxis
-    .axisLabel('Users');
+    .tickFormat(d3.format(',f'));
 
   // Parse chart data reactively
   templateInstance.autorun(() => {
@@ -56,7 +56,7 @@ Template.uniqueUsersOverTime.onRendered(function () {
     const chartData = templateInstance.chartData.get();
 
     if (chartData) {
-      const selection = d3.select(`[data-id="${templateInstance.data.attr}"] .unique-users-time-chart svg`);
+      const selection = d3.select(`[data-overview-id="${templateInstance.data.attr}"] .unique-users-time-chart svg`);
       // Render the chart with data
       selection.datum(chartData)
         .attr('width', canvasWidth)

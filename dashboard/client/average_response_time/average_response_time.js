@@ -48,8 +48,8 @@ Template.averageResponseTime.onRendered(function () {
     .tickFormat(d => moment(d).format('MM/DD'));
 
   // Configure y-axis settings for chart
-  // chart.yAxis
-  //   .axisLabel('Time, ms');
+  chart.yAxis
+    .tickFormat(d3.format(',f'));
 
   // Render chart reactively
   templateInstance.autorun(() => {
@@ -58,7 +58,7 @@ Template.averageResponseTime.onRendered(function () {
 
     if (chartData) {
       // Render the chart with data
-      const selection =  d3.select(`[data-id="${templateInstance.data.attr}"] .average-response-time svg`)
+      const selection =  d3.select(`[data-overview-id="${templateInstance.data.attr}"] .average-response-time svg`)
 
       // Render the chart with data
       selection.datum(chartData)
