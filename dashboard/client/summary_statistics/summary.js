@@ -14,7 +14,7 @@ Template.dashboardSummaryStatistic.helpers({
 
       // Get the statistic for current period
       const requestNumber = currentPeriodBucket.doc_count;
-      const responseTime = parseInt(currentPeriodBucket.response_time.values['95.0'], 10);
+      const responseTime = parseInt(currentPeriodBucket.response_time.values['95.0'], 10) || 0;
       const uniqueUsers = currentPeriodBucket.unique_users.buckets.length;
       const successCallsCount = currentPeriodBucket.success_status.buckets['success'].doc_count;
       const errorCallsCount = currentPeriodBucket.success_status.buckets['error'].doc_count;

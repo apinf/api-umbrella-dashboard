@@ -51,10 +51,10 @@ export function calculateTrend (prev, curr) {
 
   // it is impossible to divide on 0
   // If previous value is 0 then progress is up on 100%
-  if (prev === 0) return 100;
+  if (prev === 0 || isNaN(prev)) return 100;
 
   // If current value is 0 then progress is down on 100%
-  if (curr === 0) return -100;
+  if (curr === 0 || isNaN(curr)) return -100;
 
   return Math.round((curr / prev - 1) * 100);
 }
