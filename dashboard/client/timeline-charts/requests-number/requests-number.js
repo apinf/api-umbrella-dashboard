@@ -2,11 +2,28 @@ import d3 from 'd3';
 import nvd3 from 'nvd3';
 import moment from 'moment';
 
+Template.requestTimeline.onCreated(function () {
+  const templateInstance = this;
+
+  templateInstance.chartData = new ReactiveVar();
+  templateInstance.elasticsearchData = new ReactiveVar();
+
+  const buckets = templateInstance.data.buckets;
+
+  templateInstance.changePath = (path) => {
+    // find the related data for Path
+    const relatedData = buckets.filter((value) => value.key === path);
+
+    // Update chartData
+    templateInstance.elasticsearchData.set(relatedData[0]);
+  };
+
+  templateInstance.changePath(buckets[0].key);
+});
+
 Template.requestTimeline.onRendered(function () {
   // Get reference to template instance
   const templateInstance = Template.instance();
-
-  templateInstance.chartData = new ReactiveVar();
 
   // Initialize chart
   const chart = nvd3.models.lineChart();
@@ -33,7 +50,9 @@ Template.requestTimeline.onRendered(function () {
 
   // Parse chart data reactively
   templateInstance.autorun(() => {
-    const elasticsearchData = Template.currentData().aggregations.buckets;
+    const aggregationData = templateInstance.elasticsearchData.get();
+
+    const elasticsearchData = aggregationData.requests_over_time.buckets;
 
     const allCalls = elasticsearchData.map((value) => {
       return {
@@ -127,4 +146,19 @@ Template.requestTimeline.onRendered(function () {
       nvd3.utils.windowResize(chart.update);
     }
   });
+});
+
+Template.requestTimeline.helpers({
+  listPaths () {
+    const buckets = Template.instance().data.buckets;
+
+    return buckets.map(v => v.key);
+  }
+});
+
+Template.requestTimeline.events({
+  'change #requests-path': (event, templateInstance) => {
+    const selectedPath = event.currentTarget.value;
+    templateInstance.changePath(selectedPath);
+  },
 });

@@ -14,8 +14,8 @@ Template.dashboard.onCreated(function () {
 
   // Plus one day to include current day in selection
   const today = moment().add(1, 'days').format('YYYY-MM-DD');
-  const sevenDaysAgo = moment().subtract(15, 'days').format('YYYY-MM-DD');
-  const doubleSevenDaysAgo = moment().subtract(30, 'days').format('YYYY-MM-DD');
+  const sevenDaysAgo = moment().subtract(100, 'days').format('YYYY-MM-DD');
+  const doubleSevenDaysAgo = moment().subtract(200, 'days').format('YYYY-MM-DD');
 
   const queryParams = {
     size: 0,
@@ -39,6 +39,22 @@ Template.dashboard.onCreated(function () {
                     request_path: {
                       // Add '*' to partially match the url
                       value: '/api-umbrella/v1/analytics/drilldown.json',
+                    },
+                  }
+                },
+                {
+                  wildcard: {
+                    request_path: {
+                      // Add '*' to partially match the url
+                      value: '/docs/*',
+                    },
+                  }
+                },
+                {
+                  wildcard: {
+                    request_path: {
+                      // Add '*' to partially match the url
+                      value: '/alternative/rock/*',
                     },
                   }
                 },
@@ -111,7 +127,7 @@ Template.dashboard.onCreated(function () {
                 requests_over_time: {
                   date_histogram: {
                     field: 'request_at',
-                    interval: 'day',
+                    interval: 'month',
                   },
                   aggs: {
                     // get the average response time over interval

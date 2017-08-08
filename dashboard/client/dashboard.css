@@ -83,3 +83,6 @@
 /*}*/
 
 
+.request-timeline-chart svg .nv-line {
+  fill: none
+}

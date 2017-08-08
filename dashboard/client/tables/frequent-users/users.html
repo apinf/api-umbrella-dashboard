@@ -1,0 +1,22 @@
+<template name="mostFrequentUsersTable">
+  <span class="overview-col-title">Most Frequent Users</span>
+  <table class="table table-bordered table-hover table-collapse">
+    <thead>
+    <tr>
+      <th>User</th>
+      <th>Calls</th>
+      <th>Origin (Request URL)</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {{# each user in users }}
+      <tr>
+        <td>{{ user.email }}</td>
+        <td> {{ user.calls }}</td>
+        <td> {{ user.url }}</td>
+      </tr>
+    {{/ each }}
+    </tbody>
+  </table>
+</template>
