@@ -13,7 +13,7 @@
         <div data-overview-id="{{ proxyBackendPath}}">
           <div class="row">
             <!-- number of requests chart -->
-            <div class="col-xs-6">
+            <div class="col-xs-10 col-md-3">
               <span class="overview-col-title">
                 {{ bucket.requestNumber }} API Requests
               </span>
@@ -22,25 +22,26 @@
                 <div class="{{ arrowDirection 'requests' }}"></div>
                 <span>{{ summaryComparing 'requests' }}</span>
               {{/ with }}
-              <div>
-                {{# with bucket }}
-                  <p class="text-success">
-                    2XX calls: {{ callsCount.success }}
-                  </p>
-                  <p class="text-info">
-                    3XX calls: {{ callsCount.redirect }}
-                  </p>
-                  <p class="text-warning">
-                    4XX calls: {{ callsCount.fail }}
-                  </p>
-                  <p class="text-danger">
-                    5XX calls: {{ callsCount.error }}
-                  </p>
-                {{/ with }}
-              </div>
+            </div>
+            <!-- response status list-->
+            <div class="col-xs-2 col-md-3">
+              {{# with bucket }}
+                <p class="text-success">
+                  2XX calls: {{ callsCount.success }}
+                </p>
+                <p class="text-info">
+                  3XX calls: {{ callsCount.redirect }}
+                </p>
+                <p class="text-warning">
+                  4XX calls: {{ callsCount.fail }}
+                </p>
+                <p class="text-danger">
+                  5XX calls: {{ callsCount.error }}
+                </p>
+              {{/ with }}
             </div>
             <!-- response time chart -->
-            <div class="col-xs-6">
+            <div class="col-xs-12 col-md-3">
               <span class="overview-col-title">
                 {{ bucket.responseTime }} ms averageResponseTime
               </span>
@@ -51,10 +52,8 @@
               {{/ with }}
 
             </div>
-          </div>
-          <div class="row">
             <!-- unique users chart -->
-            <div class="col-xs-6">
+            <div class="col-xs-12 col-md-3">
               <span class="overview-col-title">
                 {{ bucket.uniqueUsers }} Unique API users
               </span>
@@ -64,25 +63,23 @@
                 <span>{{ summaryComparing 'users' }}</span>
               {{/ with }}
             </div>
-            <!-- Responsive endpoints board -->
-            <div class="col-xs-6"></div>
           </div>
           <div class="row">
             <!-- request timeline chart -->
-            <div class="col-xs-6">
+            <div class="col-xs-12 col-md-6">
               {{> requestTimeline aggregations=timelineRequestBucket }}
             </div>
             <!-- response time timeline chart -->
-            <div class="col-xs-6">
+            <div class="col-xs-12 col-md-6">
               {{> responseTimeTimeline aggregations=timelineRequestBucket }}
             </div>
           </div>
           <div class="row">
             <!-- table with list of problems -->
-            <div class="col-sm-6">
+            <div class="col-xs-12 col-md-6">
             </div>
             <!-- most frequent users -->
-            <div class="col-sm-6">
+            <div class="col-xs-12 col-md-6">
             </div>
           </div>
         </div>
