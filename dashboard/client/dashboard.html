@@ -1,18 +1,24 @@
 <template name="dashboard">
-  <div class="container-fluid">
-    <h1 class="page-header">API Umbrella Dashboard</h1>
+  <div class="api-view">
+    <div class="container">
+      <h1 class="page">
+        Dashboard
+      </h1>
 
-    {{# unless fetchingData }}
-      {{> spinner }}
-    {{ else }}
-      {{# if error }}
-        <h1>ElasticSearch query error</h1>
-        <p>{{ error }}</p>
-      {{/ if }}
-      {{# if elasticsearchData }}
-        <!-- Table with summary statistic-->
-        {{> dashboardSummaryStatistic elasticsearchData=elasticsearchData }}
-      {{/ if }}
-    {{/ unless }}
+      {{> dashboardToolbar }}
+
+      {{# unless fetchingData }}
+        {{> spinner }}
+      {{ else }}
+        {{# if error }}
+          <h1>ElasticSearch query error</h1>
+          <p>{{ error }}</p>
+        {{/ if }}
+        {{# if elasticsearchData }}
+          <!-- Table with summary statistic-->
+          {{> dashboardSummaryStatistic elasticsearchData=elasticsearchData }}
+        {{/ if }}
+      {{/ unless }}
+    </div>
   </div>
 </template>

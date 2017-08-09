@@ -1,0 +1,19 @@
+<template name="requestTimeline">
+  <p class="overview-col-title">
+    API request Timeline
+  </p>
+  <div class="form-group form-inline">
+    <div class="form-group">
+      <label for="requests-path">Path</label>
+    </div>
+    <div class="form-group">
+      <select class="form-control" id="requests-path">
+        {{# each path in listPaths }}
+          <option value="{{ path }}">{{ path }}</option>
+        {{/ each }}
+      </select>
+    </div>
+  </div>
+
+  <canvas id="request-timeline-chart"></canvas>
+</template>

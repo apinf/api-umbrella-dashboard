@@ -4,18 +4,15 @@ import Chart from 'chart.js';
 Template.uniqueUsersOverTime.onRendered(function () {
   const elasticsearchData = Template.currentData().aggregations.buckets;
 
-  const data = [], labels = [];
-
-  elasticsearchData.forEach(value => {
-    labels.push(moment(value.key).format('MM/DD'));
-
-    data.push({
+  const labels = elasticsearchData.map(value => moment(value.key).format('MM/DD'));
+  const data  = elasticsearchData.map(value => {
+    return {
       x: value.key,
       y: value.unique_users.buckets.length,
-    });
+    }
   });
 
-  const ctx = this.$("#unique-users-time-chart")['0'].getContext('2d');
+  const ctx = document.querySelector(`[data-overview-id="${this.data.attr}"] .unique-users-time-chart`).getContext('2d');
   const chart = new Chart(ctx, {
     // The type of chart we want to create
     type: 'line',
@@ -39,6 +36,11 @@ Template.uniqueUsersOverTime.onRendered(function () {
     options: {
       legend: {
         display: false
+      },
+      layout: {
+        padding: {
+          left: 10,
+        }
       }
     }
   });

@@ -1,5 +1,9 @@
 import { arrowDirection, percentageValue, calculateTrend } from '../compare_indicating';
 
+Template.dashboardSummaryStatistic.onCreated(function () {
+  this.displayOverview = new ReactiveDict();
+});
+
 Template.dashboardSummaryStatistic.helpers({
   buckets () {
     // Get ES data
@@ -28,6 +32,7 @@ Template.dashboardSummaryStatistic.helpers({
         previousPeriodBucket.unique_users.buckets.length, uniqueUsers
       );
 
+      Template.instance().displayOverview.set(value.key, false);
       // Get value to display
       const response = {
         // TODO: Instead of attr create an unique ID. It needs to create an unique selector for SVG chart
@@ -71,16 +76,21 @@ Template.dashboardSummaryStatistic.helpers({
     }
 
     return textColor;
+  },
+  displayOverview (parameter) {
+    return Template.instance().displayOverview.get(parameter);
   }
 });
 
 Template.dashboardSummaryStatistic.events({
-  'click [data-id]': (event) => {
+  'click [data-id]': (event, templateInstance) => {
     const target = event.currentTarget;
+
+    const display =  templateInstance.displayOverview.get(target.dataset.id);
+
+    templateInstance.displayOverview.set(target.dataset.id, !display);
 
     // Draw the box-shadow
     target.classList.toggle('open');
-    // Display a template with the related overview data
-    target.nextElementSibling.classList.toggle('hidden');
   },
 });
