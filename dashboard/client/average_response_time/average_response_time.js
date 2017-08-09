@@ -1,78 +1,45 @@
-import d3 from 'd3';
-import nvd3 from 'nvd3';
 import moment from 'moment';
+import Chart from 'chart.js';
 
 Template.averageResponseTime.onRendered(function () {
-  // Get reference to template instance
-  const templateInstance = Template.instance();
+  const elasticsearchData = Template.currentData().aggregations.buckets;
 
-  // Placeholder block
-  templateInstance.chartData = new ReactiveVar();
+  const data = [], labels = [];
 
-  // Parse chart data reactively
-  templateInstance.autorun(() => {
-    const elasticsearchData = Template.currentData().aggregations.buckets;
+  elasticsearchData.forEach(value => {
+    labels.push(moment(value.key).format('MM/DD'));
 
-    const chartData = [
-      {
-        key: 'Time, ms: ',
-        values: elasticsearchData,
-        strokeWidth: 2,
-      }
-    ];
-
-    // Update chart data reactive variable
-    templateInstance.chartData.set(chartData);
+    data.push({
+      x: value.key,
+      y: parseInt(value.percentiles_response_time.values['95.0'], 10),
+    });
   });
 
-  // Initialize chart
-  const chart = nvd3.models.lineChart();
+  const ctx = this.$(".average-response-time")['0'].getContext('2d');
+  const chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
 
-  // Set canvas size. TODO: Generate size basing on window size
-  const canvasWidth = 400;
-  const canvasHeight = 200;
+    // The data for our dataset
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Time, ms',
+          backgroundColor: '#959595',
+          borderColor: '#959595',
+          pointBorderColor: '#959595',
+          data: data,
+          fill: false,
+        }
+      ]
+    },
 
-  // Configure chart
-  chart
-    .x( d => d.key )
-    // Parse to int
-    .y( d => parseInt(d.percentiles_response_time.values['95.0'], 10))
-    .xScale(d3.time.scale())
-    .useInteractiveGuideline(true)
-    .showLegend(false);
-
-  // Configure x-axis settings for chart
-  chart.xAxis
-    .axisLabel('Days')
-    // Format dates in m/d format
-    .tickFormat(d => moment(d).format('MM/DD'));
-
-  // Configure y-axis settings for chart
-  // chart.yAxis
-  //   .axisLabel('Time, ms');
-
-  // Render chart reactively
-  templateInstance.autorun(() => {
-    // Get chart data from reactive variable
-    const chartData = templateInstance.chartData.get();
-
-    if (chartData) {
-      // Render the chart with data
-      const selection =  d3.select(`[data-id="${templateInstance.data.attr}"] .average-response-time svg`)
-
-      // Render the chart with data
-      selection.datum(chartData)
-        .attr('width', canvasWidth)
-        .attr('height', canvasHeight)
-        .call(chart);
-
-      // Remove background layout because it's black color by default
-      selection.selectAll(".nv-background").remove();
-      // Remove fill
-      selection.selectAll(".nv-line").style("fill", "none");
-
-      // Make sure chart is responsive (resize)
-      nvd3.utils.windowResize(chart.update);
+    // Configuration options go here
+    options: {
+      legend: {
+        display: false
+      }
     }
   });
 });
