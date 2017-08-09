@@ -1,6 +1,6 @@
 <template name="dashboardOverviewStatistic">
-  {{# with bucket }}
-    <div class="hidden overview-body" data-id="{{ attr }}">
+  <div class="hidden overview-body" data-overview-id="{{ bucket.attr }}">
+    {{# with bucket }}
       <div class="row overview-line">
         <div class="col-md-3">
           <span class="overview-col-title">
@@ -23,7 +23,6 @@
           </span>
         </div>
       </div>
-
       <div class="row overview-line">
         <div class="col-md-3">
           <p>Proxy: APi-Umbrella</p>
@@ -54,7 +53,7 @@
       <div class="row overview-line">
         <div class="col-md-3">
           <span class="text-danger">
-            24 errors in last 7 days
+            {{ errorCallsCount }} errors in last 7 days
           </span>
         </div>
         <div class="col-md-3">
@@ -70,13 +69,13 @@
           <span>{{ overviewComparing 'users' }}</span>
         </div>
       </div>
-      <div class="row overview-line">
-        <div class="col-md-offset-9 col-md-3">
-          <a href="" class="pull-right">
-            View details ...
-          </a>
-        </div>
+    {{/ with }}
+    <div class="row overview-line">
+      <div class="col-md-offset-9 col-md-3">
+        <a href="{{ pathFor 'apiAnalyticsPage' id=bucket.requestPath }}" class="pull-right">
+          View details ...
+        </a>
       </div>
     </div>
-  {{/ with }}
+  </div>
 </template>
