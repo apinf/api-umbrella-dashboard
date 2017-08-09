@@ -30,7 +30,7 @@ Template.responseTimeTimeline.onRendered(function () {
 
   // Set canvas size. TODO: Generate size basing on window size
   const canvasWidth = 400;
-  const canvasHeight = 200;
+  const canvasHeight = 150;
 
   // Configure chart
   chart
@@ -77,24 +77,132 @@ Template.responseTimeTimeline.onRendered(function () {
   });
 
   // Render chart reactively
+  // templateInstance.autorun(() => {
+  //   // Get chart data from reactive variable
+  //   const chartData = templateInstance.chartData.get();
+  //
+  //   if (chartData) {
+  //     const selection = d3.select(`.response-time-timeline-chart svg`);
+  //     // Render the chart with data
+  //     selection.datum(chartData)
+  //       .attr('width', canvasWidth)
+  //       .attr('height', canvasHeight)
+  //       .call(chart);
+  //
+  //     // Remove background layout because it's black color by default
+  //     selection.selectAll(".nv-background").remove();
+  //
+  //     // Make sure chart is responsive (resize)
+  //     nvd3.utils.windowResize(chart.update);
+  //   }
+  // });
+
   templateInstance.autorun(() => {
-    // Get chart data from reactive variable
-    const chartData = templateInstance.chartData.get();
+    const aggregationData = templateInstance.elasticsearchData.get();
 
-    if (chartData) {
-      const selection = d3.select(`.response-time-timeline-chart svg`);
-      // Render the chart with data
-      selection.datum(chartData)
-        .attr('width', canvasWidth)
-        .attr('height', canvasHeight)
-        .call(chart);
+    const elasticsearchData = aggregationData.requests_over_time.buckets;
 
-      // Remove background layout because it's black color by default
-      selection.selectAll(".nv-background").remove();
+    const allCalls = [], successCalls = [], redirectCalls = [], failCalls = [], errorCalls = [], labels = [];
 
-      // Make sure chart is responsive (resize)
-      nvd3.utils.windowResize(chart.update);
-    }
+    elasticsearchData.forEach(value => {
+      labels.push(moment(value.key).format('MM/DD'));
+
+      allCalls.push({
+        x: value.key,
+        y: value.doc_count,
+      });
+
+      successCalls.push({
+        x: value.key,
+        y: value.response_status.buckets['success'].doc_count,
+      });
+
+      redirectCalls.push({
+        x: value.key,
+        y: value.response_status.buckets['redirect'].doc_count,
+      });
+
+      failCalls.push({
+        x: value.key,
+        y: value.response_status.buckets['fail'].doc_count,
+      });
+
+      errorCalls.push({
+        x: value.key,
+        y: value.response_status.buckets['error'].doc_count,
+      })
+    });
+
+    const ctx = this.$("#myChart")['0'].getContext('2d');
+    const chart = new Chart(ctx, {
+      // The type of chart we want to create
+      type: 'line',
+
+      // The data for our dataset
+      data: {
+        labels: labels,
+        xAxisID: 'Days',
+        datasets: [
+          {
+            label: "All Calls",
+            backgroundColor: '#959595',
+            borderColor: '#959595',
+            pointBorderColor: '#959595',
+            data: allCalls,
+            fill: false,
+          },
+          {
+            label: "2XX calls",
+            backgroundColor: '#468847',
+            borderColor: '#468847',
+            pointBorderColor: '#468847',
+            data: successCalls,
+            fill: false,
+          },
+          {
+            label: "3XX calls",
+            backgroundColor: '#04519b',
+            borderColor: '#04519b',
+            pointBorderColor: '#04519b',
+            data: redirectCalls,
+            fill: false,
+          },
+          {
+            label: "4XX calls",
+            backgroundColor: '#e08600',
+            borderColor: '#e08600',
+            pointBorderColor: '#e08600',
+            data: failCalls,
+            fill: false,
+          },
+          {
+            label: "5XX calls",
+            backgroundColor: '#b94848',
+            borderColor: '#b94848',
+            pointBorderColor: '#b94848',
+            data: errorCalls,
+            fill: false,
+          },
+
+        ]
+      },
+
+      // Configuration options go here
+      options: {
+        scales: {
+          xAxes: [
+            {
+              scaleLabel: {
+              display: true,
+              labelString: 'Days',
+                fontSize: 14,
+                fontColor: '#000000'
+            }
+          }
+          ]
+        }
+      }
+    });
   });
 });
 

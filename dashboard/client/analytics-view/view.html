@@ -1,6 +1,21 @@
 <template name="apiAnalyticsView">
   <div class="container-fluid">
-    <h1 class="page-header">API Analytics View</h1>
+    <h1 class="page-header">
+      API name
+    </h1>
+
+    <div class="row">
+      <div class="toolbar pul-right">
+        API is Healthy
+        <button class="btn btn-default">Last 7 Days</button>
+      </div>
+
+      <div>
+        Bookmark 100
+        Rating 4.5
+        Proxy: <strong>API Umbrella</strong>
+      </div>
+    </div>
 
     {{# unless fetchingData }}
       {{> spinner }}
@@ -77,7 +92,7 @@
           <div class="row">
             <!-- table with list of problems -->
             <div class="col-xs-12 col-md-6">
-              {{> problemsTable buckets=problemsData }}
+              {{> problemsTable buckets=timelineData }}
             </div>
             <!-- most frequent users -->
             <div class="col-xs-12 col-md-6">

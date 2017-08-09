@@ -1,23 +1,36 @@
+import moment from 'moment';
+
+import Chart from 'chart.js';
+
+
 Template.problemsTable.helpers({
-  users () {
+  errors () {
     const buckets = Template.instance().data.buckets;
 
-    const users = [];
+    const errors = [];
 
     buckets.forEach(bucket => {
+      const requestPath = bucket.key;
 
+      bucket.errors_statistic.errors_over_time.buckets.forEach(date => {
+        const error = {
+          path: requestPath,
+          date: moment(date.key)
+        };
 
-      bucket.request_url.buckets.forEach(req => {
-        const user = {};
-        // Get value of email
-        user.email = bucket.user_email.buckets[0].key;
-        user.calls = req.doc_count;
-        user.url = req.key;
+        date.status.buckets.forEach(status => {
+          const error = {
+            path: requestPath,
+            date: moment(date.key),
+            status: status.key,
+            calls: status.doc_count
+          };
 
-        users.push(user);
+          errors.push(error)
+        });
       });
     });
 
-    return users
+    return errors
   }
 });

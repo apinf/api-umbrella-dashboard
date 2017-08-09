@@ -29,8 +29,8 @@ Template.requestTimeline.onRendered(function () {
   const chart = nvd3.models.lineChart();
 
   // Set canvas size. TODO: Generate size basing on window size
-  const canvasWidth = 400;
-  const canvasHeight = 200;
+  const canvasWidth = 800;
+  const canvasHeight = 400;
 
   // Configure chart
   chart
@@ -54,70 +54,66 @@ Template.requestTimeline.onRendered(function () {
 
     const elasticsearchData = aggregationData.requests_over_time.buckets;
 
-    const allCalls = elasticsearchData.map((value) => {
-      return {
+    const allCalls = [], successCalls = [], redirectCalls = [], failCalls = [], errorCalls = [], labels = [];
+
+    elasticsearchData.forEach(value => {
+      labels.push(value.key_as_string);
+
+      allCalls.push({
         x: value.key,
         y: value.doc_count,
-      }
-    });
+      });
 
-    const successCalls = elasticsearchData.map((value) => {
-      return {
+      successCalls.push({
         x: value.key,
         y: value.response_status.buckets['success'].doc_count,
-      }
-    });
+      });
 
-    const redirectCalls = elasticsearchData.map((value) => {
-      return {
+      redirectCalls.push({
         x: value.key,
         y: value.response_status.buckets['redirect'].doc_count,
-      }
-    });
+      });
 
-    const failCalls = elasticsearchData.map((value) => {
-      return {
+      failCalls.push({
         x: value.key,
         y: value.response_status.buckets['fail'].doc_count,
-      }
-    });
+      });
 
-    const errorCalls = elasticsearchData.map((value) => {
-      return {
+      errorCalls.push({
         x: value.key,
         y: value.response_status.buckets['error'].doc_count,
-      }
+      })
     });
 
     const chartData = [
       {
         values: allCalls,
         key: "All calls: ",
-        color: "#aaa",
+        color: "#959595",
         strokeWidth: 2,
       },
       {
         values: successCalls,
         key: "2XX calls: ",
-        color: "#2ca02c",
+        color: "#468847",
         strokeWidth: 2
       },
       {
         values: redirectCalls,
         key: "3XX calls: ",
-        color: "#2222ff",
+        color: "#04519b",
         strokeWidth: 2,
       },
       {
         values: failCalls,
         key: "4XX calls: ",
-        color: "#ff7f0e",
+        color: "#e08600",
         strokeWidth: 2,
       },
       {
         values: errorCalls,
         key: "5XX calls: ",
-        color: "#ff0000",
+        color: "#b94848",
         strokeWidth: 2,
       }
     ];

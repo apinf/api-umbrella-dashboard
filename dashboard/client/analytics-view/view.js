@@ -92,16 +92,6 @@ Template.apiAnalyticsView.helpers({
 
     return currentPeriodBucket.most_frequent_users.buckets;
   },
-  problemsData () {
-    const templateInstance = Template.instance();
-    // Get ES data
-    const elasticsearchData = templateInstance.elasticsearchData.get();
-    const currentPeriodBucket = elasticsearchData.aggregations.group_by_interval.buckets['currentWeek'];
-
-    console.log(currentPeriodBucket.group_by_request_path.buckets)
-
-    return currentPeriodBucket.group_by_request_path.buckets
-  }
 });
 
 Template.apiAnalyticsView.onCreated(function () {
@@ -259,11 +249,6 @@ Template.apiAnalyticsView.onCreated(function () {
                         ]
                       }
                     },
-                    response_status_details: {
-                      terms: {
-                        field: 'response_status'
-                      }
-                    }
                   }
                 },
                 // Get total Percentiles of response time for each request_path
@@ -272,6 +257,33 @@ Template.apiAnalyticsView.onCreated(function () {
                     field: 'response_time',
                     percents: [95]
                   },
+                },
+                errors_statistic: {
+                  // Get only response with error status code
+                  filter: {
+                    range: {
+                      response_status: {
+                        gte: 400,
+                      }
+                    }
+                  },
+                  aggs: {
+                    // Get date detailed by minute. Timestamp- key
+                    errors_over_time: {
+                      date_histogram: {
+                        field: 'request_at',
+                        interval: 'minute',
+                      },
+                      aggs: {
+                        // Return values of errors status code. Calls - doc_count, code - key
+                        status: {
+                          terms: {
+                            field: 'response_status'
+                          }
+                        },
+                      }
+                    },
+                  }
                 },
               },
             },
@@ -289,30 +301,11 @@ Template.apiAnalyticsView.onCreated(function () {
                 // Get URL making API calls and number of requests (doc_count)
                 request_url: {
                   terms: {
-                    field: 'request_url'
+                    field: 'request_path'
                   }
                 }
               }
             },
-            // problems_statistic: {
-            //   request_path: {
-            //     terms: {
-            //       field: 'request_path'
-            //     },
-            //     aggs: {
-            //       response_status: {
-            //         range: {
-            //           field: 'response_status',
-            //           keyed: true,
-            //           ranges: [
-            //             {key: 'fail', from: 400, to: 500},
-            //             {key: 'error', from: 500, to: 600},
-            //           ]
-            //         },
-            //       }
-            //     }
-            //   },
-            // }
           }
         },
       },
@@ -329,6 +322,10 @@ Template.apiAnalyticsView.onCreated(function () {
     // Update Elasticsearch data reactive variable with result
     templateInstance.elasticsearchData.set(result);
   });
+});
+
+Template.apiAnalyticsView.onRendered(function () {
+
 });
 
 

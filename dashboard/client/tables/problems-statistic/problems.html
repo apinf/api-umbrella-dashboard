@@ -1,20 +1,22 @@
 <template name="problemsTable">
-  <span class="overview-col-title">Most Frequent Users</span>
+  <span class="overview-col-title">Problems log</span>
   <table class="table table-bordered table-hover table-collapse">
     <thead>
     <tr>
-      <th>User</th>
+      <th>Date</th>
+      <th>Status Code</th>
       <th>Calls</th>
-      <th>Origin (Request URL)</th>
+      <th>Request path</th>
     </tr>
     </thead>
 
     <tbody>
-    {{# each user in users }}
+    {{# each error in errors }}
       <tr>
-        <td>{{ user.email }}</td>
-        <td> {{ user.calls }}</td>
-        <td> {{ user.url }}</td>
+        <td>{{ error.date }}</td>
+        <td> {{ error.status }}</td>
+        <td> {{ error.calls }}</td>
+        <td> {{ error.path }}</td>
       </tr>
     {{/ each }}
     </tbody>
