@@ -1,3 +1,11 @@
+/* Copyright 2017 Apinf Oy
+ This file is covered by the EUPL license.
+ You may obtain a copy of the licence at
+ https://joinup.ec.europa.eu/community/eupl/og_page/european-union-public-licence-eupl-v11 */
+
+// Meteor packages imports
+import { Template } from 'meteor/templating';
+
 import Chart from 'chart.js';
 import moment from 'moment';
 
@@ -24,9 +32,9 @@ Template.responseTimeTimeline.onCreated(function () {
 
 Template.responseTimeTimeline.onRendered(function () {
   // Get reference to template instance
-  const templateInstance = Template.instance();
+  const templateInstance = this;
 
-  const ctx = document.getElementById("response-time-timeline-chart").getContext('2d');
+  const ctx = document.getElementById('response-time-timeline-chart').getContext('2d');
   templateInstance.chart = new Chart(ctx, {
     // The type of chart we want to create
     type: 'line',
@@ -37,7 +45,7 @@ Template.responseTimeTimeline.onRendered(function () {
     // Configuration options go here
     options: {
       legend: {
-        display: false
+        display: false,
       },
       scales: {
         xAxes: [
@@ -46,12 +54,19 @@ Template.responseTimeTimeline.onRendered(function () {
               display: true,
               labelString: 'Days',
               fontSize: 14,
-              fontColor: '#000000'
-            }
-          }
-        ]
+              fontColor: '#000000',
+            },
+          },
+        ],
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+            },
+          },
+        ],
       },
-    }
+    },
   });
 
   // Parse chart data reactively
@@ -65,8 +80,8 @@ Template.responseTimeTimeline.onRendered(function () {
 
       return {
         x: value.key,
-        y: parseInt(responseTime, 10)
-      }
+        y: parseInt(responseTime, 10),
+      };
     });
 
     const labels = elasticsearchData.map(value => {
@@ -74,18 +89,18 @@ Template.responseTimeTimeline.onRendered(function () {
     });
 
     templateInstance.chart.data = {
-        labels: labels,
-        datasets: [{
-          label: 'Time, ms',
-          backgroundColor: '#959595',
-          borderColor: '#959595',
-          pointBorderColor: '#959595',
-          fill: false,
-          data: responseTimeData,
-        }]
-      };
+      labels,
+      datasets: [{
+        label: 'Time, ms',
+        backgroundColor: '#959595',
+        borderColor: '#959595',
+        pointBorderColor: '#959595',
+        fill: false,
+        data: responseTimeData,
+      }],
+    };
 
-      templateInstance.chart.update();
+    templateInstance.chart.update();
   });
 });
 
@@ -94,7 +109,7 @@ Template.responseTimeTimeline.helpers({
     const buckets = Template.instance().data.buckets;
 
     return buckets.map(v => v.key);
-  }
+  },
 });
 
 Template.responseTimeTimeline.events({

@@ -1,3 +1,8 @@
+/* Copyright 2017 Apinf Oy
+ This file is covered by the EUPL license.
+ You may obtain a copy of the licence at
+ https://joinup.ec.europa.eu/community/eupl/og_page/european-union-public-licence-eupl-v11 */
+
 import { arrowDirection, percentageValue, calculateTrend } from '../compare_indicating';
 
 Template.dashboardSummaryStatistic.onCreated(function () {
@@ -50,7 +55,7 @@ Template.dashboardSummaryStatistic.helpers({
         compareUsers,
       };
 
-      return response
+      return response;
     });
   },
   arrowDirection (parameter) {
@@ -67,7 +72,7 @@ Template.dashboardSummaryStatistic.helpers({
 
     // Green color for text -  percentage value near arrow
     if (direction === 'arrow-up' || direction === 'arrow-down_time') {
-      textColor =  'text-success';
+      textColor = 'text-success';
     }
 
     // Red color for text - percentage value near arrow
@@ -79,14 +84,14 @@ Template.dashboardSummaryStatistic.helpers({
   },
   displayOverview (parameter) {
     return Template.instance().displayOverview.get(parameter);
-  }
+  },
 });
 
 Template.dashboardSummaryStatistic.events({
   'click [data-id]': (event, templateInstance) => {
     const target = event.currentTarget;
 
-    const display =  templateInstance.displayOverview.get(target.dataset.id);
+    const display = templateInstance.displayOverview.get(target.dataset.id);
 
     templateInstance.displayOverview.set(target.dataset.id, !display);
 

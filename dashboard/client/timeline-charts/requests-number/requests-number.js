@@ -27,7 +27,7 @@ Template.requestTimeline.onCreated(function () {
 Template.requestTimeline.onRendered(function () {
   const templateInstance = this;
 
-  const ctx = document.getElementById("request-timeline-chart").getContext('2d');
+  const ctx = document.getElementById('request-timeline-chart').getContext('2d');
   templateInstance.chart = new Chart(ctx, {
     // The type of chart we want to create
     type: 'line',
@@ -44,12 +44,19 @@ Template.requestTimeline.onRendered(function () {
               display: true,
               labelString: 'Days',
               fontSize: 14,
-              fontColor: '#000000'
-            }
-          }
-        ]
-      }
-    }
+              fontColor: '#000000',
+            },
+          },
+        ],
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+            },
+          },
+        ],
+      },
+    },
   });
 
   templateInstance.autorun(() => {
@@ -90,14 +97,14 @@ Template.requestTimeline.onRendered(function () {
       errorCalls.push({
         x: value.key,
         y: value.response_status.buckets['error'].doc_count,
-      })
+      });
     });
 
     templateInstance.chart.data = {
-      labels: labels,
+      labels,
       datasets: [
         {
-          label: "All Calls",
+          label: 'All Calls',
           backgroundColor: '#959595',
           borderColor: '#959595',
           pointBorderColor: '#959595',
@@ -105,7 +112,7 @@ Template.requestTimeline.onRendered(function () {
           fill: false,
         },
         {
-          label: "2XX",
+          label: '2XX',
           backgroundColor: '#468847',
           borderColor: '#468847',
           pointBorderColor: '#468847',
@@ -113,7 +120,7 @@ Template.requestTimeline.onRendered(function () {
           fill: false,
         },
         {
-          label: "3XX",
+          label: '3XX',
           backgroundColor: '#04519b',
           borderColor: '#04519b',
           pointBorderColor: '#04519b',
@@ -121,7 +128,7 @@ Template.requestTimeline.onRendered(function () {
           fill: false,
         },
         {
-          label: "4XX",
+          label: '4XX',
           backgroundColor: '#e08600',
           borderColor: '#e08600',
           pointBorderColor: '#e08600',
@@ -129,7 +136,7 @@ Template.requestTimeline.onRendered(function () {
           fill: false,
         },
         {
-          label: "5XX",
+          label: '5XX',
           backgroundColor: '#b94848',
           borderColor: '#b94848',
           pointBorderColor: '#b94848',
@@ -148,7 +155,7 @@ Template.requestTimeline.helpers({
     const buckets = Template.instance().data.buckets;
 
     return buckets.map(v => v.key);
-  }
+  },
 });
 
 Template.requestTimeline.events({

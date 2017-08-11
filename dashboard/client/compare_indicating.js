@@ -1,7 +1,12 @@
+/* Copyright 2017 Apinf Oy
+ This file is covered by the EUPL license.
+ You may obtain a copy of the licence at
+ https://joinup.ec.europa.eu/community/eupl/og_page/european-union-public-licence-eupl-v11 */
+
 export function arrowDirection (parameter, bucket) {
   let style;
 
-  switch(parameter) {
+  switch (parameter) {
     case 'requests': {
       style = bucket.compareRequests === 0 ? undefined :
         bucket.compareRequests > 0 ? 'arrow-up' : 'arrow-down';
@@ -25,18 +30,17 @@ export function arrowDirection (parameter, bucket) {
 export function percentageValue (parameter, bucket) {
   let percentage;
 
-  switch(parameter) {
+  switch (parameter) {
     case 'requests': {
-      percentage = Math.abs(bucket.compareRequests)
+      percentage = Math.abs(bucket.compareRequests);
     }
       break;
     case 'response': {
-      percentage = Math.abs(bucket.compareResponse)
-
+      percentage = Math.abs(bucket.compareResponse);
     }
       break;
     case 'users': {
-      percentage = Math.abs(bucket.compareUsers)
+      percentage = Math.abs(bucket.compareUsers);
     }
   }
 
@@ -71,7 +75,7 @@ export function summaryComparing (parameter, bucket) {
       trend = 'lower';
     }
 
-    return `${percentages} ${trend} than last 7 days`
+    return `${percentages} ${trend} than last 7 days`;
   }
 
   return '';

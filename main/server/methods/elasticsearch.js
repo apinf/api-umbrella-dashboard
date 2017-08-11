@@ -1,3 +1,8 @@
+/* Copyright 2017 Apinf Oy
+ This file is covered by the EUPL license.
+ You may obtain a copy of the licence at
+ https://joinup.ec.europa.eu/community/eupl/og_page/european-union-public-licence-eupl-v11 */
+
 // Npm packages imports
 import ElasticSearch from 'elasticsearch';
 
@@ -19,15 +24,15 @@ Meteor.methods({
     return esClient
       .ping({
         // ping usually has a 3000ms timeout
-        requestTimeout: 3000
+        requestTimeout: 3000,
       })
       .then(() => {
-        return esClient.search(queryParams)
+        return esClient.search(queryParams);
       })
       .catch(error => {
           // Throw an error
-          throw new Meteor.Error(error.message);
-        }
+        throw new Meteor.Error(error.message);
+      }
       );
   },
 });
