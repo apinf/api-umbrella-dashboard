@@ -1,0 +1,148 @@
+<!-- Copyright 2017 Apinf Oy
+This file is covered by the EUPL license.
+You may obtain a copy of the licence at
+https://joinup.ec.europa.eu/community/eupl/og_page/european-union-public-licence-eupl-v11 -->
+
+<template name="apiAnalyticsView">
+  <div class="api-view">
+    <div class="container">
+      <h1>
+        API name
+      </h1>
+
+      <div class="row">
+        <div class="col-md-12">
+          <span>
+            Bookmark 100
+            Rating 4.5
+            Proxy: <strong>API Umbrella</strong>
+          </span>
+          <div class="toolbar pull-right">
+              <span class="text-success" style="font-weight: bold">
+                API is Healthy
+              </span>
+            <button class="btn btn-default btn-sm" style="margin-left: 5px;">
+              Last 7 Days
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {{# unless fetchingData }}
+        {{> spinner }}
+      {{ else }}
+        {{# if error }}
+          <h1>ElasticSearch query error</h1>
+          <p>{{ error }}</p>
+        {{/ if }}
+        {{# if elasticsearchData }}
+          <div data-overview-id="{{ proxyBackendPath}}">
+            <div class="row">
+              <div class="col-xs-12 col-md-4">
+                <div class="row">
+                  {{# with bucket }}
+                    <p class="text-success col-xs-6 col-md-3">
+                      2XX calls: {{ callsCount.success }}
+                    </p>
+                    <p class="text-info col-xs-6 col-md-3">
+                      3XX: {{ callsCount.redirect }}
+                    </p>
+                    <p class="text-warning col-xs-6 col-md-3">
+                      4XX: {{ callsCount.fail }}
+                    </p>
+                    <p class="text-danger col-xs-6 col-md-3">
+                      5XX: {{ callsCount.error }}
+                    </p>
+                  {{/ with }}
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- number of requests chart -->
+              <div class="col-xs-12 col-md-4">
+                <div class="api-view-card form-group">
+                  <p class="overview-col-title">
+                    {{ bucket.requestNumber }} requests
+                  </p>
+                  <p class="overview-col-title">
+                    API Requests
+                  </p>
+                  <div class="form-group">
+                    {{> requestsOverTime aggregations=bucket.requestOverTime attr=proxyBackendPath }}
+                  </div>
+                  {{# with bucket }}
+                    <div class="{{ arrowDirection 'requests' }}"></div>
+                    <span>{{ summaryComparing 'requests' }}&nbsp;</span>
+                  {{/ with }}
+                  <!-- response status list-->
+                </div>
+              </div>
+
+              <!-- response time chart -->
+              <div class="col-xs-12 col-md-4">
+                <div class="api-view-card form-group">
+                  <p class="overview-col-title">
+                    {{ bucket.responseTime }} ms
+                  </p>
+                  <p class="overview-col-title">
+                    Average Response Time
+                  </p>
+                  <div class="form-group">
+                    {{> averageResponseTime aggregations=bucket.requestOverTime attr=proxyBackendPath }}
+                  </div>
+                  {{# with bucket }}
+                    <div class="{{ arrowDirection 'response' }}"></div>
+                    <span>{{ summaryComparing 'response' }}&nbsp;</span>
+                  {{/ with }}
+                </div>
+              </div>
+              <!-- unique users chart -->
+              <div class="col-xs-12 col-md-4">
+                <div class="api-view-card form-group">
+                  <p class="overview-col-title">
+                    {{ bucket.uniqueUsers }} users
+                  </p>
+                  <p class="overview-col-title">
+                    Unique API users
+                  </p>
+                  <div class="form-group">
+                    {{> uniqueUsersOverTime aggregations=bucket.requestOverTime attr=proxyBackendPath }}
+                  </div>
+                  {{# with bucket }}
+                    <div class="{{ arrowDirection 'users' }}"></div>
+                    <span>{{ summaryComparing 'users' }}&nbsp;</span>
+                  {{/ with }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <!-- request timeline chart -->
+              <div class="col-xs-12 col-md-6">
+                <div class="api-view-card form-group">
+                  {{> requestTimeline buckets=timelineData }}
+                </div>
+              </div>
+              <!-- response time timeline chart -->
+              <div class="col-xs-12 col-md-6">
+                <div class="api-view-card form-group">
+                  {{> responseTimeTimeline buckets=timelineData }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <!-- table with list of problems -->
+              <div class="col-xs-12 col-md-6">
+                  {{> problemsTable buckets=timelineData }}
+              </div>
+              <!-- most frequent users -->
+              <div class="col-xs-12 col-md-6">
+                  {{> mostFrequentUsersTable buckets=mostFrequentUsers }}
+              </div>
+            </div>
+          </div>
+        {{/ if }}
+      {{/ unless }}
+    </div>
+  </div>
+</template>

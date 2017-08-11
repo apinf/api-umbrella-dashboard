@@ -1,4 +1,9 @@
-import { ReactiveVar } from 'meteor/reactive-var'
+/* Copyright 2017 Apinf Oy
+ This file is covered by the EUPL license.
+ You may obtain a copy of the licence at
+ https://joinup.ec.europa.eu/community/eupl/og_page/european-union-public-licence-eupl-v11 */
+
+import { ReactiveVar } from 'meteor/reactive-var';
 import { Template } from 'meteor/templating';
 
 import moment from 'moment';
@@ -14,8 +19,8 @@ Template.dashboard.onCreated(function () {
 
   // Plus one day to include current day in selection
   const today = moment().add(1, 'days').format('YYYY-MM-DD');
-  const sevenDaysAgo = moment().subtract(15, 'days').format('YYYY-MM-DD');
-  const doubleSevenDaysAgo = moment().subtract(30, 'days').format('YYYY-MM-DD');
+  const sevenDaysAgo = moment().subtract(100, 'days').format('YYYY-MM-DD');
+  const doubleSevenDaysAgo = moment().subtract(200, 'days').format('YYYY-MM-DD');
 
   const queryParams = {
     size: 0,
@@ -40,7 +45,23 @@ Template.dashboard.onCreated(function () {
                       // Add '*' to partially match the url
                       value: '/api-umbrella/v1/analytics/drilldown.json',
                     },
-                  }
+                  },
+                },
+                {
+                  wildcard: {
+                    request_path: {
+                      // Add '*' to partially match the url
+                      value: '/docs/*',
+                    },
+                  },
+                },
+                {
+                  wildcard: {
+                    request_path: {
+                      // Add '*' to partially match the url
+                      value: '/alternative/rock/*',
+                    },
+                  },
                 },
               ],
             },
@@ -49,10 +70,10 @@ Template.dashboard.onCreated(function () {
             range: {
               request_at: {
                 lt: today,
-                gte: doubleSevenDaysAgo // Extend request to both interval. It needs to compare two interval
-              }
-            }
-          }
+                gte: doubleSevenDaysAgo, // Extend request to both interval. It needs to compare two interval
+              },
+            },
+          },
         },
       },
       aggs: {
@@ -60,23 +81,23 @@ Template.dashboard.onCreated(function () {
         group_by_request_path: {
           // get number of calls
           terms: {
-            field: 'request_path'
+            field: 'request_path',
           },
           aggs: {
             // Get statistic for each period(current and previous)
             group_by_interval: {
               range: {
                 field: 'request_at',
-                keyed : true,
+                keyed: true,
                 // includes the *from* value and excludes the *to* value for each range.
                 ranges: [
                   {
-                    key : 'previousWeek',
+                    key: 'previousWeek',
                     from: doubleSevenDaysAgo,
                     to: sevenDaysAgo,
                   },
                   {
-                    key : 'currentWeek',
+                    key: 'currentWeek',
                     from: sevenDaysAgo,
                     to: today,
                   },
@@ -87,48 +108,48 @@ Template.dashboard.onCreated(function () {
                 response_time: {
                   percentiles: {
                     field: 'response_time',
-                    percents: [95]
+                    percents: [95],
                   },
                 },
                 // get user_id for each request_path and for each period
                 unique_users: {
                   terms: {
-                    field: 'user_id'
+                    field: 'user_id',
                   },
                 },
                 // get count of success calls (2xx)
                 success_status: {
-                  range : {
-                    field : 'response_status',
+                  range: {
+                    field: 'response_status',
                     keyed: true,
-                    ranges : [
-                      { key: 'success', from : 200, to : 300 },
-                      { key: 'error', from : 500, to : 600 },
-                    ]
-                  }
+                    ranges: [
+                      { key: 'success', from: 200, to: 300 },
+                      { key: 'error', from: 500, to: 600 },
+                    ],
+                  },
                 },
                 // get number of request for each day in week and for each period
                 requests_over_time: {
                   date_histogram: {
                     field: 'request_at',
-                    interval: 'day',
+                    interval: 'week',
                   },
                   aggs: {
                     // get the average response time over interval
                     percentiles_response_time: {
                       percentiles: {
                         field: 'response_time',
-                        percents: [95]
-                      }
+                        percents: [95],
+                      },
                     },
                     unique_users: {
                       terms: {
-                        field: 'user_id'
+                        field: 'user_id',
                       },
                     },
-                  }
+                  },
                 },
-              }
+              },
             },
           },
         },
@@ -143,10 +164,9 @@ Template.dashboard.onCreated(function () {
     if (elasticsearchHost) {
       // Get Elasticsearch data
       Meteor.call('getElasticsearchData', elasticsearchHost, queryParams, (error, result) => {
-
         if (error) {
           templateInstance.error.set(error);
-          throw Meteor.Error(error)
+          throw Meteor.Error(error);
         }
 
         // Update Elasticsearch data reactive variable with result
@@ -171,5 +191,5 @@ Template.dashboard.helpers({
   error () {
     const templateInstance = Template.instance();
     return templateInstance.error.get();
-  }
+  },
 });

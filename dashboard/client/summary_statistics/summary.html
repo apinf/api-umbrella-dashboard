@@ -1,3 +1,8 @@
+<!-- Copyright 2017 Apinf Oy
+This file is covered by the EUPL license.
+You may obtain a copy of the licence at
+https://joinup.ec.europa.eu/community/eupl/og_page/european-union-public-licence-eupl-v11 -->
+
 <template name="dashboardSummaryStatistic">
   <!-- Table head -->
   <div>
@@ -25,7 +30,7 @@
         </div>
       </div>
     </div>
-
+    <!-- Table body -->
     {{# each bucket in buckets }}
       <div class="statistic-block">
         <div data-id="{{ bucket.attr }}" class="dashboard-table-row statistic-line">
@@ -58,7 +63,9 @@
             </div>
           {{/ with }}
         </div>
-        {{> dashboardOverviewStatistic bucket=bucket }}
+        {{# if displayOverview bucket.attr }}
+          {{> dashboardOverviewStatistic bucket=bucket }}
+        {{/ if }}
       </div>
     {{/ each }}
   </div>

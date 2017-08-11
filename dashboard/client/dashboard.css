@@ -1,3 +1,19 @@
+/* Copyright 2017 Apinf Oy
+ This file is covered by the EUPL license.
+ You may obtain a copy of the licence at
+ https://joinup.ec.europa.eu/community/eupl/og_page/european-union-public-licence-eupl-v11 */
+
+.api-view {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.api-view-card {
+  border-radius: 5px;
+  background-color: white;
+  padding: 10px 20px;
+}
+
 .arrow-up {
   width: 0;
   height: 0;
@@ -39,6 +55,7 @@
   border: 1px solid #ccc;
   border-bottom: none;
   border-radius: 5px;
+  background-color: white;
 }
 
 .dashboard-table-row.open,
@@ -60,6 +77,8 @@
 
 .overview-body {
   padding: 15px 0;
+  background-color: white;
+  margin: 5px;
 }
 
 .overview-line {
@@ -72,6 +91,10 @@
   display: inline-block;
   /*text-align: right;*/
   margin-right: 10px;
+}
+
+.table-statistic td {
+  word-break: break-all;
 }
 
 /*.request-number, .unique-users {*/

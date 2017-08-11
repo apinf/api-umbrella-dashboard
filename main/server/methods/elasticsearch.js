@@ -1,3 +1,8 @@
+/* Copyright 2017 Apinf Oy
+ This file is covered by the EUPL license.
+ You may obtain a copy of the licence at
+ https://joinup.ec.europa.eu/community/eupl/og_page/european-union-public-licence-eupl-v11 */
+
 // Npm packages imports
 import ElasticSearch from 'elasticsearch';
 
@@ -6,19 +11,29 @@ Meteor.methods({
     // Initialize Elasticsearch client, using provided host value
     const esClient = new ElasticSearch.Client({ host });
 
-    return await esClient
+    // try {
+    //   // ping usually has a 3000ms timeout
+    //   await esClient.ping({requestTimeout: 3000})
+    //
+    //   // Return promise with
+    //   return esClient.search(queryParams)
+    // } catch (error) {
+    //   throw new Meteor.Error(error.message);
+    // }
+
+    return esClient
       .ping({
         // ping usually has a 3000ms timeout
-        requestTimeout: 1000
+        requestTimeout: 3000,
       })
       .then(() => {
-        return esClient.search(queryParams)
+        return esClient.search(queryParams);
       })
-      .then(response => response)
       .catch(error => {
           // Throw an error
-          throw new Meteor.Error(error.message);
-        }
+        throw new Meteor.Error(error.message);
+      }
       );
   },
 });
+

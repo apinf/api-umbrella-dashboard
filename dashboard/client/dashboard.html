@@ -1,18 +1,29 @@
-<template name="dashboard">
-  <div class="container-fluid">
-    <h1 class="page-header">API Umbrella Dashboard</h1>
+<!-- Copyright 2017 Apinf Oy
+This file is covered by the EUPL license.
+You may obtain a copy of the licence at
+https://joinup.ec.europa.eu/community/eupl/og_page/european-union-public-licence-eupl-v11 -->
 
-    {{# unless fetchingData }}
-      {{> spinner }}
-    {{ else }}
-      {{# if error }}
-        <h1>ElasticSearch query error</h1>
-        <p>{{ error }}</p>
-      {{/ if }}
-      {{# if elasticsearchData }}
-        <!-- Table with summary statistic-->
-        {{> dashboardSummaryStatistic elasticsearchData=elasticsearchData }}
-      {{/ if }}
-    {{/ unless }}
+<template name="dashboard">
+  <div class="api-view">
+    <div class="container">
+      <h1 class="page">
+        Dashboard
+      </h1>
+
+      {{> dashboardToolbar }}
+
+      {{# unless fetchingData }}
+        {{> spinner }}
+      {{ else }}
+        {{# if error }}
+          <h1>ElasticSearch query error</h1>
+          <p>{{ error }}</p>
+        {{/ if }}
+        {{# if elasticsearchData }}
+          <!-- Table with summary statistic-->
+          {{> dashboardSummaryStatistic elasticsearchData=elasticsearchData }}
+        {{/ if }}
+      {{/ unless }}
+    </div>
   </div>
 </template>
